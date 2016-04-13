@@ -1,0 +1,20 @@
+{
+  "firstName": {
+    "sequelizeType": "STRING",
+    "sequelizeValidate": {
+      "notEmpty": true
+    }
+  },
+  "lastName": {
+    "sequelizeType": "STRING",
+    "sequelizeValidate": {
+      "notEmpty": true
+    }
+  },
+  "email": {
+    "sequelizeType": "STRING",
+    "sequelizeValidate": {
+      "isEmail": true
+    }
+  }
+}
