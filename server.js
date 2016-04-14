@@ -1,3 +1,24 @@
+'use strict';
+
 require('dotenv').config();
 
-require('./routes/api');
+const express = require('express');
+const exphbs  = require('express-handlebars');
+const http    = require('http');
+
+const app = express();
+
+const hbs = exphbs.create({
+  handlebars: require('handlebars'),
+  extname: '.hbs'
+});
+app.engine('.hbs', hbs.engine);
+app.set('view engine', '.hbs');
+
+app.use(require('./routes'));
+
+const port = Number(process.env.PORT || 4000);
+const server = http.createServer(app).listen(port, () => {
+  let addr = server.address();
+  console.log('Listeing at port %d', addr.port);
+});

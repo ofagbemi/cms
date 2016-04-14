@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "dependencies": {
     "dotenv": "^2.0.0",
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "handlebars": "^4.0.5",
     "mysql": "^2.10.2",
     "sequelize": "^3.21.0",
     "tunnel-ssh": "^2.1.1",
