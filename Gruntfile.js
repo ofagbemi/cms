@@ -37,7 +37,7 @@ module.exports = (grunt) => {
         tasks: ['sass', 'postcss']
       },
       scripts: {
-        files: ['client/*.js', 'components/**/*.js', 'views/**/*.js'],
+        files: ['client/*.js', 'components/**/*.js', 'views/**/*.js', 'shared/**/*.js'],
         tasks: ['browserify']
       }
     }
