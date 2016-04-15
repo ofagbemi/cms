@@ -6,7 +6,6 @@ const path      = require('path');
 const async     = require('async');
 const Sequelize = require('sequelize');
 const tunnel    = require('tunnel-ssh');
-const pascalize = require('uppercamelcase');
 
 class Models {
   constructor() {
@@ -136,7 +135,7 @@ function toSequelizeFormat(modelJSON, types) {
   let sequelized = {};
   for (let key in modelJSON) {
 
-    if (!modelJSON.hasOwnProperty(key) || key === '_cms') {
+    if (!modelJSON.hasOwnProperty(key) || key.indexOf('_cms_') === 0) {
       continue;
     }
 

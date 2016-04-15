@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-
+    {{> head-tags/head-tags}}
   </head>
   <body>
-    {{{ body }}}
+    <div id="content">
+      {{{ body }}}
+    </div>
+    {{> script-tags/script-tags}}
   </body>
 </html>

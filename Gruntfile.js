@@ -21,18 +21,33 @@ module.exports = (grunt) => {
         src: 'res/css/main.css'
       }
     },
+    browserify: {
+      options: {
+        transform: [['babelify', { presets: ['es2015'] }]]
+      },
+      dist: {
+        files: {
+          'res/js/main.js': 'client/main.js'
+        }
+      }
+    },
     watch: {
       sass: {
         files: ['**/*.scss'],
         tasks: ['sass', 'postcss']
+      },
+      scripts: {
+        files: ['client/*.js', 'components/**/*.js', 'views/**/*.js'],
+        tasks: ['browserify']
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-postcss');
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
 
-  grunt.registerTask('build', ['sass', 'postcss']);
+  grunt.registerTask('build', ['sass', 'postcss', 'browserify']);
 };

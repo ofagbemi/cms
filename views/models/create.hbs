@@ -1,0 +1,31 @@
+<div id="models_create">
+  <h2>Create new model</h2>
+
+  <form method="POST" action="/models/create">
+    <header>
+      <input type="text" name="tableDisplayName" class="large table-display-name" placeholder="Untitled model">
+      <p class="sub hide">This table will be named ‘<span class="table-name"></span>’ in the database</p>
+    </header>
+
+    <div class="column">
+      <div class="initial">
+        <label>
+          <p>Display name</p>
+          <input type="text" name="columnDisplayName" class="column-display-name" placeholder="E.g. “department” or “home university”">
+          <p class="sub hide">This column will be named ‘<span class="column-name"></span>’ in the database</p>
+        </label>
+
+        <label>
+          <p>Type</p>
+          <select>
+            <option disabled selected>Choose a data type</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <footer>
+      <button type="button" class="add-column">Add column</button>
+      <button type="submit" class="finish primary">Finish</button>
+    </footer>
+  </form>
+</div>

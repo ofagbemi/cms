@@ -1,0 +1,60 @@
+#models_create {
+  h2 {
+    margin-top: 84px;
+  }
+
+  > form {
+
+    margin-top: 48px;
+
+    header {
+
+      margin-bottom: 48px;
+
+      > .sub {
+        margin-top: 13px;
+        color: $silver;
+
+        transition: all 250ms;
+
+        &.hide {
+          opacity: 0;
+        }
+      }
+    }
+
+    > .column {
+      > .initial {
+        display: flex;
+
+        > label {
+          flex: 1 0 auto;
+          max-width: 50%;
+
+          &:first-child {
+            margin-right: 24px;
+          }
+
+          > .sub {
+            margin-top: 13px;
+            color: $silver;
+
+            transition: all 250ms;
+
+            &.hide {
+              opacity: 0;
+            }
+          }
+        }
+      }
+    }
+    > footer {
+      margin-top: 40px;
+      display: flex;
+
+      > button.finish {
+        margin-left: auto;
+      }
+    }
+  }
+}
