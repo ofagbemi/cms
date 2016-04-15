@@ -10,7 +10,9 @@ const pascalize = require('uppercamelcase');
 
 class Models {
   constructor() {
-    this._loadedModels = {};
+    this._schemas = {};
+    this._models = {};
+
     let server = tunnel({
       host: process.env.SSH_HOST,
       dstPort: process.env.SSH_PORT,
@@ -28,8 +30,16 @@ class Models {
         dialect: 'mysql'
       });
 
-      this.loadModels(sequelize, this._loadedModels);
+      this._loadModels(sequelize, this._schemas, this._models);
     });
+  }
+
+  get schemas() {
+    return this._schemas;
+  }
+
+  get models() {
+    return this._models;
   }
 }
 
@@ -38,9 +48,9 @@ class Models {
  * the lib folder
  *
  * @param {Sequelize} sequelize
- * @param {object} obj - Hash to store loaded models in
+ * @param {object} modelsObj - Hash to store loaded models in
  */
-Models.prototype.loadModels = function(sequelize, obj) {
+Models.prototype._loadModels = function(sequelize, schemasObj, modelsObj) {
 
   fs.readdir(path.join(__dirname, '/lib'), (err, files) => {
 
@@ -58,6 +68,9 @@ Models.prototype.loadModels = function(sequelize, obj) {
     let parallelFns = _.object(tables, _.map(tables, (table) => {
       return (callback) => {
         let modelJSON = require('./lib/' + table + '.json');
+
+        if (schemasObj) { schemasObj[table] = modelJSON; }
+
         let model = sequelize.import(table, createImportCallback({
           table: table,
           modelJSON: modelJSON
@@ -69,7 +82,8 @@ Models.prototype.loadModels = function(sequelize, obj) {
 
     async.parallel(parallelFns, (err, result) => {
       if (err) { throw err; }
-      if (obj) { _.extend(obj, result); }
+
+      if (modelsObj) { _.extend(modelsObj, result); }
     });
   });
 };
@@ -120,7 +134,13 @@ function defineModel(modelJSON, params) { // TODO: use destructring when availab
  */
 function toSequelizeFormat(modelJSON, types) {
   let sequelized = {};
-  _.each(modelJSON, function(value, key) {
+  for (let key in modelJSON) {
+
+    if (!modelJSON.hasOwnProperty(key) || key === '_cms') {
+      continue;
+    }
+
+    let value = modelJSON[key];
     if (key === 'sequelizeType') {
       sequelized.type = types[value];
     } else if (key === 'sequelizeValidate') {
@@ -130,9 +150,8 @@ function toSequelizeFormat(modelJSON, types) {
     } else {
       sequelized[key] = value;
     }
-  });
+  }
   return sequelized;
 }
 
 module.exports = new Models();
-
