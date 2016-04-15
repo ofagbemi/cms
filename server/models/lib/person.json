@@ -1,4 +1,11 @@
 {
+  "_cms": {
+    "table": {
+      "name": "person",
+      "columns": ["firstName", "lastName", "email"]
+    }
+  },
+
   "firstName": {
     "sequelizeType": "STRING",
     "sequelizeValidate": {
