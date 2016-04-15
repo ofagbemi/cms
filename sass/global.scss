@@ -1,0 +1,27 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Nimbus Sans', 'Arial', sans-serif;
+  font-weight: 200;
+
+  display: flex;
+  justify-content: center;
+
+  > #content {
+    width: 768px;
+  }
+}
+
+h1 {
+  font-size: 3rem;
+  font-family: 'Merriweather', 'Georgia', serif;
+  font-weight: 200;
+}
