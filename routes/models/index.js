@@ -15,6 +15,9 @@ router.get('/', (req, res, next) => {
       models: JSON.parse(body)
     });
   });
+})
+.get('/create', (req, res, next) => {
+  res.render('models/create');
 });
 
 module.exports = router;

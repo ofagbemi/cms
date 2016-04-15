@@ -4,7 +4,7 @@ const ComponentFactory = require('./services/component-factory');
 
 
 // views
-const ModelsView = require('../views/models');
-ModelsView.init();
+const ModelsCreateView = require('../views/models/create');
+ModelsCreateView.init();
 
 ComponentFactory.hydrate(document.documentElement);
