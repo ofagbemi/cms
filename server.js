@@ -23,5 +23,5 @@ app.use('/res', express.static('res'));
 const port = Number(process.env.PORT || 4000);
 const server = http.createServer(app).listen(port, () => {
   let addr = server.address();
-  console.log('Listeing at port %d', addr.port);
+  console.log('Listening at port %d', addr.port);
 });
