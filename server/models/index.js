@@ -136,7 +136,7 @@ function toSequelizeFormat(modelJSON, types) {
   let sequelized = {};
   for (let key in modelJSON) {
 
-    if (!modelJSON.hasOwnProperty(key) || key === '_cms') {
+    if (!modelJSON.hasOwnProperty(key) || key.indexOf('_cms_') === 0) {
       continue;
     }
 

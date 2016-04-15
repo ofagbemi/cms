@@ -1,5 +1,5 @@
 {
-  "_cms": {
+  "_cms_": {
     "table": {
       "name": "person",
       "columns": ["firstName", "lastName", "email"]
@@ -10,13 +10,17 @@
     "sequelizeType": "STRING",
     "sequelizeValidate": {
       "notEmpty": true
-    }
+    },
+
+    "_cms_displayName": "first name"
   },
   "lastName": {
     "sequelizeType": "STRING",
     "sequelizeValidate": {
       "notEmpty": true
-    }
+    },
+
+    "_cms_displayName": "last name"
   },
   "email": {
     "sequelizeType": "STRING",
