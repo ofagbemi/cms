@@ -6,7 +6,6 @@ const path      = require('path');
 const async     = require('async');
 const Sequelize = require('sequelize');
 const tunnel    = require('tunnel-ssh');
-const pascalize = require('uppercamelcase');
 
 class Models {
   constructor() {
