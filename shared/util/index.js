@@ -1,9 +1,8 @@
 'use strict';
 
-import camelcase from 'camelcase';
-import pascalcase from 'uppercamelcase';
-
-import {trim} from 'underscore.string';
+const camelcase  = require('camelcase');
+const pascalcase = require('uppercamelcase');
+const trim       = require('underscore.string/trim');
 
 exports.getTableName = (displayName) => {
   // replace non-word characters with spaces before pacalcase
