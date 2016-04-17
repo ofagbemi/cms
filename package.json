@@ -12,6 +12,7 @@
     "express": "^4.13.4",
     "express-handlebars": "^3.0.0",
     "handlebars": "^4.0.5",
+    "hbsfy": "^2.6.0",
     "jquery": "^2.2.3",
     "mysql": "^2.10.2",
     "request": "^2.71.0",

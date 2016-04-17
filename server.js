@@ -13,6 +13,7 @@ const hbs = exphbs.create({
   defaultLayout: 'main',
   partialsDir: 'components',
   handlebars: require('handlebars'),
+  helpers: require('./shared/hbs-helpers'),
   extname: '.hbs'
 });
 app.engine('.hbs', hbs.engine);

@@ -23,8 +23,8 @@ body {
   }
 }
 
-h1, h2, h3 {
-  font-family: 'Merriweather', 'Georgia', serif;
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', 'Georgia', serif;
 }
 
 h1 {
@@ -35,6 +35,12 @@ h1 {
 h2 {
   font-size: 24px;
   font-weight: 400;
+}
+
+h4 {
+  font-size: 14px;
+  font-weight: 200;
+  font-style: italic;
 }
 
 button {
@@ -67,7 +73,7 @@ button {
 input[type="text"].large {
   width: 100%;
   padding: 16px 0;
-  font-family: 'Merriweather', 'Georgia', serif;
+  font-family: 'Playfair Display', 'Georgia', serif;
   font-size: 36px;
   appearance: none;
   border: none;

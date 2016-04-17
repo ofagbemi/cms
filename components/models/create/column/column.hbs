@@ -1,0 +1,20 @@
+<div data-component="models_create_column">
+  <div class="initial">
+    <label>
+      <p>Display name</p>
+      <input type="text" name="columnDisplayName" class="column-display-name" placeholder="E.g. “department” or “home university”">
+      <p class="sub hide">This column will be named ‘<span class="column-name"></span>’ in the database</p>
+    </label>
+
+    <label>
+      <p>Type</p>
+      <select name="type">
+        <option disabled selected>Choose a data type</option>
+
+        {{#each @root._cms_.dataTypeLabels}}
+        <option value="{{ this }}">{{capitalize this}}</option>
+        {{/each}}
+      </select>
+    </label>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+[data-component="models_create_column"] {
+  > .initial {
+    display: flex;
+
+    > label {
+      flex: 1 0 auto;
+      max-width: 50%;
+
+      &:first-child {
+        margin-right: 24px;
+      }
+
+      > .sub {
+        margin-top: 13px;
+        color: $silver;
+
+        transition: all 250ms;
+
+        &.hide {
+          opacity: 0;
+        }
+      }
+    }
+  }
+}
