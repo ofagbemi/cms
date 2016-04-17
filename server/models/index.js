@@ -220,7 +220,6 @@ function toSequelizeFormat(modelJSON, types) {
     if (key === 'sequelizeType') {
       let type = types[value];
       if (modelJSON.sequelizeTypeArgs) {
-        console.log(modelJSON.sequelizeTypeArgs);
         type = type(...modelJSON.sequelizeTypeArgs);
       }
       sequelized.type = type;
