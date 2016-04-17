@@ -218,7 +218,12 @@ function toSequelizeFormat(modelJSON, types) {
 
     let value = modelJSON[key];
     if (key === 'sequelizeType') {
-      sequelized.type = types[value];
+      let type = types[value];
+      if (modelJSON.sequelizeTypeArgs) {
+        console.log(modelJSON.sequelizeTypeArgs);
+        type = type(...modelJSON.sequelizeTypeArgs);
+      }
+      sequelized.type = type;
     } else if (key === 'sequelizeValidate') {
       sequelized.validate = value;
     } else if (_.isObject(value)) {
