@@ -1,0 +1,36 @@
+{
+  "string": {
+    "sequelizeType": "STRING"
+  },
+  "text": {
+    "sequelizeType": "TEXT"
+  },
+  "integer": {
+    "sequelizeType": "INTEGER"
+  },
+  "double": {
+    "sequelizeType": "DOUBLE"
+  },
+  "date": {
+    "sequelizeType": "DATE"
+  },
+  "boolean": {
+    "sequelizeType": "BOOLEAN"
+  },
+  "email": {
+    "sequelizeType": "STRING",
+    "sequelizeValidate": {
+      "isEmail": true
+    }
+  },
+  "url": {
+    "sequelizeType": "STRING",
+    "sequelizeTypeArgs": [1024],
+    "sequelizeValidate": {
+      "isUrl": true
+    }
+  },
+  "file": {
+
+  }
+}

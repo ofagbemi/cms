@@ -4,3 +4,4 @@ node_modules/
 .sass-cache/
 res/css/
 res/js/
+server/models/lib/

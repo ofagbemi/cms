@@ -1,11 +1,19 @@
 'use strict';
 
-const _         = require('underscore');
-const fs        = require('fs');
-const path      = require('path');
-const async     = require('async');
-const Sequelize = require('sequelize');
-const tunnel    = require('tunnel-ssh');
+const _          = require('underscore');
+const fs         = require('fs');
+const path       = require('path');
+const async      = require('async');
+const Sequelize  = require('sequelize');
+const tunnel     = require('tunnel-ssh');
+const util       = require('../../shared/util');
+const trim       = require('underscore.string/trim');
+const escapeHTML = require('underscore.string/escapeHTML');
+
+const DATA_TYPES = require('./data-types.json');
+const SEQUELIZE_DEFINE_OPTS = {
+  freezeTableName: true
+};
 
 class Models {
   constructor() {
@@ -29,7 +37,8 @@ class Models {
         dialect: 'mysql'
       });
 
-      this._loadModels(sequelize, this._schemas, this._models);
+      this._sequelize = sequelize;
+      this._loadModels(this._schemas, this._models);
     });
   }
 
@@ -43,46 +52,114 @@ class Models {
 }
 
 /**
+ * Creates a new model, loads it, and passes information about the
+ * model to the caller
+ *
+ * @param {object} params
+ * @param {string} params.displayName
+ * @param {object[]} params.columns
+ * @param {string} params.columns[].displayName
+ * @param {string} params.columns[].type
+ * @param {function} callback
+ */
+Models.prototype.create = function(params, callback) {
+  let json = getJSON(params);
+  this._writeJSON(json, (err, info) => {
+    if (err) { return callback(err); }
+
+    let tableName = info.tableName;
+    this._loadModel(tableName, (err, model) => {
+      if (err) { return callback(err); }
+
+      callback(null, _.extend({}, info, { model: model }));
+    });
+  });
+};
+
+/**
+ * Writes the passed in JSON to a file
+ * @param {object} json
+ * @param {function} callback
+ */
+Models.prototype._writeJSON = function(json, callback) {
+  callback = callback || _.noop;
+  if (!json || !json._cms_ || !json._cms_.table || !json._cms_.table.name) {
+    return callback(new Error('No table name provided'));
+  }
+
+  let tableName = json._cms_.table.name;
+  let writePath = path.join(__dirname, 'lib/', tableName + '.json');
+
+  fs.open(writePath, 'w', (err, fd) => {
+
+    if (err) { return callback(err); }
+
+    const buffer = new Buffer(JSON.stringify(json, null, 2));
+    fs.write(fd, buffer, 0, buffer.length, (err, bytes, buffer) => {
+      if (err) { return callback(err); }
+
+      callback(null, {
+        path: writePath,
+        tableName: tableName
+      });
+    });
+  });
+};
+
+
+Models.prototype._loadModel = function(name, callback) {
+  callback = callback || _.noop;
+
+  let modelJSON = require('./lib/' + name + '.json');
+  this._schemas[name] = modelJSON;
+  let model = this._sequelize.import(name, createImportCallback({
+    table: name,
+    modelJSON: modelJSON
+  }));
+  model.sync().then(() => {
+    callback(null, model);
+  }).catch((err) => {
+    callback(err);
+  });
+};
+
+/**
  * Loads and each of the models defined in
  * the lib folder
  *
  * @param {Sequelize} sequelize
  * @param {object} modelsObj - Hash to store loaded models in
  */
-Models.prototype._loadModels = function(sequelize, schemasObj, modelsObj) {
+Models.prototype._loadModels = function() {
 
   fs.readdir(path.join(__dirname, '/lib'), (err, files) => {
 
     if (err) { throw err; }
 
+    const jsonRegex = /\.json$/;
+
+    // just get the JSON files
+    files = _.filter(files, (file) => {
+      return !!file.match(jsonRegex);
+    });
+
     // create an array of table names...
-    let tables = _.compact(_.map(files, (file) => {
-      if (!file.match(/\.json$/)) { return null; }
-      return file.replace(/\.json$/, '');
-    }));
+    let tables = _.map(files, (file) => {
+      return file.replace(jsonRegex, '');
+    });
 
     // ...then use that array of table names to build up
     // a hash of functions to run in parallel to collect
     // each of the sync'd models
     let parallelFns = _.object(tables, _.map(tables, (table) => {
       return (callback) => {
-        let modelJSON = require('./lib/' + table + '.json');
-
-        if (schemasObj) { schemasObj[table] = modelJSON; }
-
-        let model = sequelize.import(table, createImportCallback({
-          table: table,
-          modelJSON: modelJSON
-        }));
-        model.sync();
-        callback(null, model);
+        this._loadModel(table, callback);
       };
     }));
 
     async.parallel(parallelFns, (err, result) => {
       if (err) { throw err; }
-
-      if (modelsObj) { _.extend(modelsObj, result); }
+      _.extend(this._models, result);
     });
   });
 };
@@ -118,7 +195,7 @@ function defineModel(modelJSON, params) { // TODO: use destructring when availab
   let sequelize = params.sequelize;
   let types = params.types;
 
-  return sequelize.define(table, toSequelizeFormat(modelJSON, types));
+  return sequelize.define(table, toSequelizeFormat(modelJSON, types), SEQUELIZE_DEFINE_OPTS);
 }
 
 /**
@@ -151,6 +228,60 @@ function toSequelizeFormat(modelJSON, types) {
     }
   }
   return sequelized;
+}
+
+/**
+ * @param {string} displayName
+ * @returns {string}
+ */
+function sanitizeDisplayName(displayName) {
+  return escapeHTML(trim(String(displayName)));
+}
+
+/**
+ * @param {object} column
+ * @returns {object}
+ */
+function sanitizeColumn(column) {
+  let sanitized = _.pick(column, 'displayName', 'type');
+  sanitized.displayName = sanitizeDisplayName(sanitized.displayName);
+  if (!DATA_TYPES[sanitized.type]) {
+    sanitized.type = 'string';
+  }
+  return sanitized;
+}
+
+/**
+ * @param {string} params.displayName
+ * @param {object[]} columns
+ * @param {string} columns[].displayName
+ * @param {string} columns[].type
+ * @returns {object} table schema ready to be stringified
+ * and saved
+ */
+function getJSON(params) {
+  let displayName = sanitizeDisplayName(params.displayName);
+  let columns = _.map(params.columns, sanitizeColumn);
+
+  let json = {};
+  let columnNames = [];
+  for (let column of columns) {
+    let name = util.getColumnName(column.displayName);
+    columnNames.push(name);
+    json[name] = _.extend({}, DATA_TYPES[column.type], {
+      _cms_displayName: column.displayName
+    });
+  }
+
+  let tableName = util.getTableName(displayName);
+  json._cms_ = {
+    table: {
+      name: tableName,
+      displayName: displayName,
+      columns: columnNames
+    }
+  };
+  return json;
 }
 
 module.exports = new Models();
