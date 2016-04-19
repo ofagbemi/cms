@@ -1,6 +1,7 @@
 'use strict';
 
 const _       = require('underscore');
+const async   = require('async');
 const request = require('request');
 const router  = require('express').Router();
 const path    = require('path');
@@ -40,13 +41,29 @@ router.get('/:model/:page?', (req, res, next) => {
     limit: ROW_LIMIT
   });
 
-  let url = `${API_URL}/models/${req.params.model}?${query}`;
-  request.get(url, (err, response, body) => {
+  // rows, schema
+  async.parallel({
+    rows: (callback) => {
+      let url = `${API_URL}/models/${req.params.model}?${query}`;
+      request.get(url, (err, response, body) => {
+        if (err) { return callback(err); }
+
+        let rows = JSON.parse(body);
+        return callback(null, rows);
+      });
+    },
+    schema: (callback) => {
+      let url = `${API_URL}/models/schemas/${req.params.model}`;
+      request.get(url, (err, response, body) => {
+        if (err) { return callback(err); }
+
+        let schema = JSON.parse(body);
+        return callback(null, schema);
+      });
+    }
+  }, (err, data) => {
     if (err) { return next(err); }
-
-    res.render('models/rows', {
-
-    });
+    return res.render('models/rows', data);
   });
 });
 
