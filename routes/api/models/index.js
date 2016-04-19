@@ -98,8 +98,8 @@ function processFilters(filters, schema) {
     // this filter
     if (!match) { return; }
 
-    // if the column value isn't a valid member of the schema, skip
-    // over it
+    // if the column name isn't a valid member of the schema,
+    // skip over it
     if (schema && schema._cms_.table.columns.indexOf(column) === -1) {
       return;
     }
