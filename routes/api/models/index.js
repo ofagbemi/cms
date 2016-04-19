@@ -16,11 +16,11 @@ const FILTER_REGEXES = [{
   transform: (str) => `%${str}%`
 }];
 
-router.get('/schema', (req, res) => {
+router.get('/schemas', (req, res) => {
   res.json(Models.schemas);
 });
 
-router.get('/schema/:model', (req, res, nex) => {
+router.get('/schemas/:model', (req, res, nex) => {
   let model = req.params.model;
   let schema = Models.schemas[model];
 
