@@ -14,7 +14,7 @@ const DATA_TYPE_LABELS = _.keys(DATA_TYPES).sort();
 const ROW_LIMIT = 20;
 
 router.get('/', (req, res, next) => {
-  let url = API_URL + '/models';
+  let url = API_URL + '/models/schemas';
   request.get(url, (err, response, body) => {
     if (err) { return next(err); }
 
