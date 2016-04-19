@@ -113,7 +113,7 @@ function processFilters(filters, schema) {
       ref[op] = value;
     }
 
-    // add this set of filters to the returend
+    // add this set of filters to the returned
     // 'where' hash
     _.extend(where, filter);
   });
