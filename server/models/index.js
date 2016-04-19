@@ -34,8 +34,8 @@ class Models {
         process.env.DB_NAME,
         process.env.DB_USER,
         process.env.DB_PASS, {
-        host: '127.0.0.1',
-        dialect: 'mysql'
+          host: '127.0.0.1',
+          dialect: 'mysql'
       });
 
       this._sequelize = sequelize;
@@ -141,7 +141,7 @@ Models.prototype._loadModels = function() {
 
     // just get the JSON files
     files = _.filter(files, (file) => {
-      return !!file.match(jsonRegex);
+      return file.search(jsonRegex) > -1;
     });
 
     // create an array of table names...
