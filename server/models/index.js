@@ -24,7 +24,8 @@ class Models {
       host: process.env.SSH_HOST,
       dstPort: process.env.SSH_PORT,
       username: process.env.SSH_USER,
-      password: process.env.SSH_PASS
+      password: process.env.SSH_PASS,
+      keepAlive: true
     }, (err, result) => {
 
       if (err) { throw err; }
