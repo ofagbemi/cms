@@ -16,8 +16,19 @@ const FILTER_REGEXES = [{
   transform: (str) => `%${str}%`
 }];
 
-router.get('/', (req, res) => {
+router.get('/schema', (req, res) => {
   res.json(Models.schemas);
+});
+
+router.get('/schema/:model', (req, res, nex) => {
+  let model = req.params.model;
+  let schema = Models.schemas[model];
+
+  if (!schema) {
+    return res.status(404).json({error: `Schema ${model} could not be found`});
+  } else {
+    return res.json(schema);
+  }
 });
 
 router.get('/:model', (req, res, next) => {
