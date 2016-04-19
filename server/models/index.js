@@ -269,13 +269,14 @@ function getJSON(params) {
   let columns = _.map(params.columns, sanitizeColumn);
 
   let json = {};
-  let columnNames = [];
+  let columnsJSON = [];
   for (let column of columns) {
     let name = util.getColumnName(column.displayName);
-    columnNames.push(name);
-    json[name] = _.extend({}, DATA_TYPES[column.type], {
-      _cms_displayName: column.displayName
+    columnsJSON.push({
+      name: name,
+      displayName: column.displayName
     });
+    json[name] = _.extend({}, DATA_TYPES[column.type]);
   }
 
   let tableName = util.getTableName(displayName);
@@ -283,7 +284,7 @@ function getJSON(params) {
     table: {
       name: tableName,
       displayName: displayName,
-      columns: columnNames
+      columns: columnsJSON
     }
   };
   return json;
