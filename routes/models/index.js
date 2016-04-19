@@ -41,7 +41,6 @@ router.get('/:model/:page?', (req, res, next) => {
   });
 
   let url = `${API_URL}/models/${req.params.model}?${query}`;
-  console.log(url);
   request.get(url, (err, response, body) => {
     if (err) { return next(err); }
 
