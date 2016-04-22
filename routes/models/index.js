@@ -33,18 +33,39 @@ router.get('/create', (req, res, next) => {
   });
 });
 
-router.get('/:model/:page?', (req, res, next) => {
-  let page = req.params.page || 1;
+router.get('/:model/row/:id', (req, res, next) => {
+  let id = req.params.id;
+  let modelName = req.params.model;
+  // row, schema
+  async.parallel({
+    row: (callback) => {
+      let url = `${API_URL}/models/${modelName}/row/${id}`;
+      request.get(url, (err, response, body) => {
+        if (err) { return callback(err); }
+        return callback(null, JSON.parse(body));
+      });
+    },
+    schema: getLoadSchemaMiddleware(modelName)
+  }, (err, data) => {
+    if (err) { return next(err); }
+    return res.render('models/row/edit', data);
+  });
+});
 
+router.get('/:model/:page?', (req, res, next) => {
+
+  let page = req.params.page || 1;
   let query = qs.stringify({
     page: page,
     limit: ROW_LIMIT
   });
 
+  let modelName = req.params.model;
+
   // rows, schema
   async.parallel({
     rows: (callback) => {
-      let url = `${API_URL}/models/${req.params.model}?${query}`;
+      let url = `${API_URL}/models/${modelName}?${query}`;
       request.get(url, (err, response, body) => {
         if (err) { return callback(err); }
 
@@ -52,15 +73,7 @@ router.get('/:model/:page?', (req, res, next) => {
         return callback(null, rows);
       });
     },
-    schema: (callback) => {
-      let url = `${API_URL}/models/schemas/${req.params.model}`;
-      request.get(url, (err, response, body) => {
-        if (err) { return callback(err); }
-
-        let schema = JSON.parse(body);
-        return callback(null, schema);
-      });
-    }
+    schema: getLoadSchemaMiddleware(modelName)
   }, (err, data) => {
     if (err) { return next(err); }
     return res.render('models/rows', data);
@@ -80,5 +93,17 @@ router.post('/', (req, res, next) => {
     });
   });
 });
+
+function getLoadSchemaMiddleware(schema) {
+  return (callback) => {
+    let url = `${API_URL}/models/schemas/${schema}`;
+    request.get(url, (err, response, body) => {
+      if (err) { return callback(err); }
+
+      let schema = JSON.parse(body);
+      return callback(null, schema);
+    });
+  };
+}
 
 module.exports = router;

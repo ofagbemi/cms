@@ -1,0 +1,9 @@
+<div data-component="models_rows_edit_column">
+  <label>
+    <p>{{ column.displayName }}</p>
+
+    {{#xif column.type '===' 'string'}}
+    <input type="text" name="{{ column.name }}" value="{{ at column.name row }}">
+    {{/xif}}
+  </label>
+</div>

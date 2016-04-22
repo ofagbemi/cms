@@ -21,11 +21,11 @@ router.get('/schemas', (req, res) => {
 });
 
 router.get('/schemas/:model', (req, res, nex) => {
-  let model = req.params.model;
-  let schema = Models.schemas[model];
+  let modelName = req.params.model;
+  let schema = Models.schemas[modelName];
 
   if (!schema) {
-    return res.status(404).json({error: `Schema ${model} could not be found`});
+    return res.status(404).json({error: `Schema ${modelName} could not be found`});
   } else {
     return res.json(schema);
   }
@@ -56,6 +56,29 @@ router.get('/:model', (req, res, next) => {
   }).then((rows) => {
     rows = _.map(rows, (row) => row.dataValues );
     return res.json(rows);
+  }).catch((err) => {
+    return next(err);
+  });
+});
+
+router.get('/:model/row/:id', (req, res, next) => {
+  let model = Models.models[req.params.model];
+  let schema = Models.schemas[req.params.model];
+  if (!model) {
+    return next(new Error(`Model ${req.params.model} could not be found`));
+  } else if (!schema) {
+    return next(new Error(`Schema ${req.params.model} could not be found`));
+  }
+
+  let id = req.params.id;
+  model.findById(id).then((row) => {
+    if (!row) {
+      return res.status(404).json({
+        error: `${req.params.model} with id ${id} could not be found`
+      });
+    } else {
+      return res.json(row);
+    }
   }).catch((err) => {
     return next(err);
   });

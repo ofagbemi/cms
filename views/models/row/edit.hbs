@@ -1,0 +1,17 @@
+<div id="models_row_edit">
+  <h2>Editing {{ schema._cms_.table.displayName }}</h2>
+
+  <form id="edit-form" method="POST" action="/models/{{ schema._cms_.table.name}}/row/{{ row.id }}">
+    {{#with schema._cms_.table}}
+    {{#each columns}}
+    <div class="columns">
+      {{> models/rows/edit/column/column column=this row=../../row}}
+    </div>
+    {{/each}}
+    {{/with}}
+    <footer>
+      <button type="button" class="cancel">Cancel</button>
+      <button type="submit" class="save primary">Save</button>
+    </footer>
+  </form>
+</div>
