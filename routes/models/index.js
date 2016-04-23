@@ -52,8 +52,21 @@ router.get('/:model/row/:id', (req, res, next) => {
   });
 });
 
-router.get('/:model/:page?', (req, res, next) => {
+router.put('/:model/row/:id', (req, res, next) => {
+  let id = req.params.id;
+  let modelName = req.params.model;
 
+
+  let url = `${API_URL}/models/${modelName}/row/${id}`;
+  request.put({url: url, form: req.body}, (err, response, body) => {
+    if (err) { return next(err); }
+    return res.json(_.extend(JSON.parse(body), {
+      redirectUrl: `/models/${modelName}/row`
+    }));
+  });
+});
+
+router.get('/:model/:page?', (req, res, next) => {
   let page = req.params.page || 1;
   let query = qs.stringify({
     page: page,
@@ -81,7 +94,7 @@ router.get('/:model/:page?', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-  let url = API_URL + '/models';
+  let url = `${API_URL}/models`;
   request.post({
     url: url,
     form: req.body

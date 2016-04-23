@@ -7,9 +7,10 @@
     <div id="content">
       {{{ body }}}
     </div>
-    <script id="hbs-root" type="application/json">
-      {{{json @root}}}
-    </script>
+    <script id="hbs-root" type="application/json">{
+      "schema": {{{json @root.schema}}},
+      "row": {{{json @root.row}}}
+    }</script>
     {{> script-tags/script-tags}}
   </body>
 </html>

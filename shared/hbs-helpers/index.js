@@ -1,5 +1,6 @@
 'use strict';
 
+const _ = require('underscore');
 const capitalize = require('underscore.string/capitalize');
 
 exports.capitalize = (string) => {

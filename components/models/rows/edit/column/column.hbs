@@ -1,7 +1,6 @@
-<div data-component="models_rows_edit_column">
+<div data-component="models_rows_edit_column" data-columnName="{{ column.name }}" data-type="{{ column.type }}">
   <label>
     <p>{{ column.displayName }}</p>
-
     {{#xif column.type '===' 'string'}}
     <input type="text" name="{{ column.name }}" value="{{ at column.name row }}">
     {{/xif}}

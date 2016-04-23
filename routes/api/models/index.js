@@ -31,7 +31,10 @@ router.get('/schemas/:model', (req, res, nex) => {
   }
 });
 
-router.get('/:model', (req, res, next) => {
+router.get('/:model', validateModel, (req, res, next) => {
+
+  let model = req.data.model;
+  let schema = req.data.schema;
 
   let page = parseInt(req.query.page) || 1;
   let limit = parseInt(req.query.limit, 10) || DEFAULT_ROW_LIMIT;
@@ -39,15 +42,8 @@ router.get('/:model', (req, res, next) => {
     limit = MAX_ROW_LIMIT;
   }
 
-  let model = Models.models[req.params.model];
-  let schema = Models.schemas[req.params.model];
-  if (!model) {
-    return next(new Error(`Model ${req.params.model} could not be found`));
-  } else if (!schema) {
-    return next(new Error(`Schema ${req.params.model} could not be found`));
-  }
-
   let where = processFilters(req.query.filter, schema);
+
   model.findAll({
     limit: limit,
     offset: (page - 1) * limit,
@@ -61,15 +57,8 @@ router.get('/:model', (req, res, next) => {
   });
 });
 
-router.get('/:model/row/:id', (req, res, next) => {
-  let model = Models.models[req.params.model];
-  let schema = Models.schemas[req.params.model];
-  if (!model) {
-    return next(new Error(`Model ${req.params.model} could not be found`));
-  } else if (!schema) {
-    return next(new Error(`Schema ${req.params.model} could not be found`));
-  }
-
+router.get('/:model/row/:id', validateModel, (req, res, next) => {
+  let model = req.data.model;
   let id = req.params.id;
   model.findById(id).then((row) => {
     if (!row) {
@@ -82,6 +71,26 @@ router.get('/:model/row/:id', (req, res, next) => {
   }).catch((err) => {
     return next(err);
   });
+});
+
+router.put('/:model/row/:id', validateModel, (req, res, next) => {
+  let model = req.data.model;
+  let id = req.params.id;
+
+  let data = req.body;
+
+  // TODO may want to check for some sort of permissions
+  // here
+  // don't bother with sanitization here -- validators
+  // attached to the object will take care of it
+  model.update(data, {
+    where: { id: id }
+  }).then((result) => {
+    return res.json({ msg: 'Update successful' });
+  }).catch((err) => {
+    return next(err);
+  });
+
 });
 
 router.post('/', (req, res, next) => {
@@ -154,4 +163,22 @@ function processFilters(filters, schema) {
   });
 
   return where;
+}
+
+function validateModel(req, res, next) {
+
+  let model = Models.models[req.params.model];
+  let schema = Models.schemas[req.params.model];
+
+  if (!model) {
+    return next(new Error(`Model ${req.params.model} could not be found`));
+  } else if (!schema) {
+    return next(new Error(`Schema ${req.params.model} could not be found`));
+  }
+
+  req.data = req.data || {};
+  req.data.model = model;
+  req.data.schema = schema;
+
+  return next();
 }
