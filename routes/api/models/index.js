@@ -73,6 +73,20 @@ router.get('/:model/row/:id', validateModel, (req, res, next) => {
   });
 });
 
+router.post('/:model', validateModel, (req, res, next) => {
+  let model = req.data.model;
+
+  let data = req.body;
+
+  // don't bother with sanitization here -- validators
+  // attached to the object will take care of it
+  model.create(data).then((result) => {
+    return res.json(result.dataValues);
+  }).catch((err) => {
+    return next(err);
+  });
+});
+
 router.put('/:model/row/:id', validateModel, (req, res, next) => {
   let model = req.data.model;
   let id = req.params.id;

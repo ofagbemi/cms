@@ -24,4 +24,7 @@ ModelsCreateView.init();
 const ModelsRowEdit = require('../views/models/row/edit');
 ModelsRowEdit.init();
 
+const ModelsRowCreate = require('../views/models/row/create');
+ModelsRowCreate.init();
+
 ComponentFactory.hydrate(document.documentElement);

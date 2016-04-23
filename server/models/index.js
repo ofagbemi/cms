@@ -22,7 +22,7 @@ class Models {
 
     let server = tunnel({
       host: process.env.SSH_HOST,
-      dstPort: process.env.SSH_PORT,
+      dstPort: process.env.SSH_DB_PORT,
       username: process.env.SSH_USER,
       password: process.env.SSH_PASS,
       keepAlive: true

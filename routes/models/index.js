@@ -33,6 +33,27 @@ router.get('/create', (req, res, next) => {
   });
 });
 
+router.get('/:model/create', (req, res, next) => {
+  let modelName = req.params.model;
+  getLoadSchemaParallelFn(modelName)((err, schema) => {
+    if (err) { return next(err); }
+    res.render('models/row/create', {
+      schema: schema
+    });
+  });
+});
+
+router.post('/:model', (req, res, next) => {
+  let modelName = req.params.model;
+  let url = `${API_URL}/models/${modelName}`;
+  request.post({url: url, form: req.body}, (err, response, body) => {
+    if (err) { return next(err); }
+    return res.json(_.extend(JSON.parse(body), {
+      redirectUrl: `/models/${modelName}`
+    }));
+  });
+});
+
 router.get('/:model/row/:id', (req, res, next) => {
   let id = req.params.id;
   let modelName = req.params.model;
@@ -45,7 +66,7 @@ router.get('/:model/row/:id', (req, res, next) => {
         return callback(null, JSON.parse(body));
       });
     },
-    schema: getLoadSchemaMiddleware(modelName)
+    schema: getLoadSchemaParallelFn(modelName)
   }, (err, data) => {
     if (err) { return next(err); }
     return res.render('models/row/edit', data);
@@ -61,7 +82,7 @@ router.put('/:model/row/:id', (req, res, next) => {
   request.put({url: url, form: req.body}, (err, response, body) => {
     if (err) { return next(err); }
     return res.json(_.extend(JSON.parse(body), {
-      redirectUrl: `/models/${modelName}/row`
+      redirectUrl: `/models/${modelName}`
     }));
   });
 });
@@ -86,7 +107,7 @@ router.get('/:model/:page?', (req, res, next) => {
         return callback(null, rows);
       });
     },
-    schema: getLoadSchemaMiddleware(modelName)
+    schema: getLoadSchemaParallelFn(modelName)
   }, (err, data) => {
     if (err) { return next(err); }
     return res.render('models/rows', data);
@@ -106,7 +127,7 @@ router.post('/', (req, res, next) => {
   });
 });
 
-function getLoadSchemaMiddleware(schema) {
+function getLoadSchemaParallelFn(schema) {
   return (callback) => {
     let url = `${API_URL}/models/schemas/${schema}`;
     request.get(url, (err, response, body) => {
