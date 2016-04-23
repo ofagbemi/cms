@@ -10,11 +10,18 @@ class ModelsRowEdit {
 }
 
 ModelsRowEdit.prototype.init = function() {
+
+  if (!this.$el.length) { return; }
+
   if (this._init) { return; }
   this._init = true;
 
 
-  this.data = JSON.parse(this.$el.find('script.model-data').remove().html());
+  try {
+    this.data = JSON.parse(this.$el.find('script.model-data').remove().html());
+  } catch (e) {
+    this.data = {};
+  }
 
   this.$form = this.$el.find('form#edit-form');
   this.$form.on('submit', _.bind(this._handleSubmit, this));

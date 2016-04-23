@@ -95,7 +95,6 @@ router.put('/:model/row/:id', validateModel, (req, res, next) => {
 
 router.post('/', (req, res, next) => {
   let data = req.body;
-
   Models.create({
     displayName: data.displayName,
     columns: data.columns

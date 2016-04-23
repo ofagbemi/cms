@@ -15,6 +15,8 @@ class ModelsCreate {
 }
 
 ModelsCreate.prototype.init = function() {
+  if (!this.$el.length) { return; }
+
   if (this._init) { return; }
 
   this._init = true;
@@ -33,7 +35,6 @@ ModelsCreate.prototype.init = function() {
 ModelsCreate.prototype._handleSubmit = function(e) {
   e.preventDefault();
   let data = this.getData();
-
   $.ajax('/models', {
     type: 'POST',
     data: data,

@@ -276,7 +276,11 @@ function getJSON(params) {
       name: name,
       displayName: column.displayName
     });
-    json[name] = _.extend({}, DATA_TYPES[column.type]);
+    json[name] = _.extend(
+      {},
+      DATA_TYPES[column.type],
+      getSchemaExtras(column)
+    );
   }
 
   let tableName = util.getTableName(displayName);
@@ -288,6 +292,25 @@ function getJSON(params) {
     }
   };
   return json;
+}
+
+/**
+ * Dirty, I know...
+ *
+ * @param {object} column
+ *
+ * @returns the extra object parameters that
+ * need to be defined on the schema. In the example of files, adds
+ * on a a root directory location that gets stored in the schema
+ */
+function getSchemaExtras(column) {
+  let extras = {};
+  if (column.type === 'file' && column.defaultDirectory) {
+    _.extend(extras, {
+      defaultDirectory: column.defaultDirectory
+    });
+  }
+  return extras;
 }
 
 module.exports = new Models();

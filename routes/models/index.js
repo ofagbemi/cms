@@ -100,7 +100,6 @@ router.post('/', (req, res, next) => {
     form: req.body
   }, (err, response, body) => {
     if (err) { return next(err); }
-
     res.json({
       redirectUrl: '/models'
     });
