@@ -272,15 +272,12 @@ function getJSON(params) {
   let columnsJSON = [];
   for (let column of columns) {
     let name = util.getColumnName(column.displayName);
-    columnsJSON.push({
+    columnsJSON.push(_.extend({
       name: name,
-      displayName: column.displayName
-    });
-    json[name] = _.extend(
-      {},
-      DATA_TYPES[column.type],
-      getSchemaExtras(column)
-    );
+      displayName: column.displayName,
+      type: column.type
+    }, getSchemaExtras(column)));
+    json[name] = DATA_TYPES[column.type];
   }
 
   let tableName = util.getTableName(displayName);

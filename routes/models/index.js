@@ -46,6 +46,7 @@ router.get('/:model/create', (req, res, next) => {
 router.post('/:model', (req, res, next) => {
   let modelName = req.params.model;
   let url = `${API_URL}/models/${modelName}`;
+
   request.post({url: url, form: req.body}, (err, response, body) => {
     if (err) { return next(err); }
     return res.json(_.extend(JSON.parse(body), {
