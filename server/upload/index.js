@@ -100,12 +100,19 @@ Uploader.prototype.upload = function(fileStreamCallback, pathStreamCallback, cb)
         process.env.UPLOADS_DIR,
         result.destPath,
         result.file.filename);
+
+      let relPath = path.join(
+        process.env.REL_UPLOADS_DIR,
+        result.destPath,
+        result.file.filename
+      );
+
       sftp.rename(result.file.tmpPath, fullPath, (err) => {
         if (err) {
-          let msg = `error renaming file ${result.file.tmpPath} to ${fullPath}`;
+          let msg = `Error renaming file ${result.file.tmpPath} to ${fullPath}`;
           return cb(new Error(msg));
         }
-        return cb(null, { fullPath: fullPath });
+        return cb(null, { path: relPath });
       });
     });
   });

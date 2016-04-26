@@ -43,7 +43,8 @@ router.post('/', (req, res, next) => {
     (err, result) => {
       if (err) { return  next(err); }
       return res.json({
-        msg: `Successfully uploaded file '${result.fullPath}'`
+        msg: `Successfully uploaded file '${result.path}'`,
+        path: result.path
       });
     }
   );
