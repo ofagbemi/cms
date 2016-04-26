@@ -25,7 +25,8 @@
     "tunnel-ssh": "^2.1.1",
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.4",
-    "uppercamelcase": "^1.1.0"
+    "uppercamelcase": "^1.1.0",
+    "url-join": "^1.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",

@@ -1,8 +1,41 @@
-<div data-component="models_rows_edit_column" data-columnName="{{ column.name }}" data-type="{{ column.type }}">
+<div data-component="models_rows_edit_column"
+     data-columnName="{{ column.name }}"
+     data-type="{{ column.type }}">
+
+  {{#xif column.type '===' 'string'}}
   <label>
     <p>{{ column.displayName }}</p>
-    {{#xif column.type '===' 'string'}}
     <input type="text" name="{{ column.name }}" value="{{ at column.name row }}">
-    {{/xif}}
   </label>
+  {{/xif}}
+
+  {{#xif column.type '===' 'file'}}
+
+  {{#if ( at column.name row ) }}
+  <div class="row">
+    <a href="{{ at column.name row }}">{{ hciRootUrl ( at column.name row ) }}</a>
+  </div>
+  {{/if}}
+
+  <div class="row">
+    <input type="file" name="{{ column.name }}">
+  </div>
+
+  <div class="row">
+    <label>
+      <div>
+        <input type="checkbox" checked>
+        <span>Use default directory</span>
+      </div>
+    </label>
+    <label>
+      <div class="row directory-wrapper">
+        <span class="hci-uploads-url">{{ hciUploadsUrl "/" }}</span>
+        <input type="text" disabled class="directory"
+               placeholder="path/to/file">
+      </div>
+    </label>
+  </div>
+
+  {{/xif}}
 </div>

@@ -1,6 +1,7 @@
 'use strict';
 
-const _ = require('underscore');
+const urlJoin = require('url-join');
+const _       = require('underscore');
 const capitalize = require('underscore.string/capitalize');
 
 exports.capitalize = (string) => {
@@ -17,7 +18,7 @@ exports.at = (key, object) => {
   }
 };
 
-exports.xif = function(l, op, r, options) {
+exports.xif = (l, op, r, options) => {
   var success = false;
   switch(op) {
     case '===':
@@ -39,4 +40,12 @@ exports.xif = function(l, op, r, options) {
   }
 
   return success ? options.fn(this) : options.inverse(this);
+};
+
+exports.hciRootUrl = (url) => {
+  return urlJoin(process.env.HCI_ROOT_URL, url);
+};
+
+exports.hciUploadsUrl = (url) => {
+  return urlJoin(process.env.HCI_UPLOADS_URL, url);
 };
