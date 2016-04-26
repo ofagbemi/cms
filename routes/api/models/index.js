@@ -16,11 +16,25 @@ const FILTER_REGEXES = [{
   transform: (str) => `%${str}%`
 }];
 
-router.get('/', (req, res) => {
+router.get('/schemas', (req, res) => {
   res.json(Models.schemas);
 });
 
-router.get('/:model', (req, res, next) => {
+router.get('/schemas/:model', (req, res, nex) => {
+  let modelName = req.params.model;
+  let schema = Models.schemas[modelName];
+
+  if (!schema) {
+    return res.status(404).json({error: `Schema ${modelName} could not be found`});
+  } else {
+    return res.json(schema);
+  }
+});
+
+router.get('/:model', validateModel, (req, res, next) => {
+
+  let model = req.data.model;
+  let schema = req.data.schema;
 
   let page = parseInt(req.query.page) || 1;
   let limit = parseInt(req.query.limit, 10) || DEFAULT_ROW_LIMIT;
@@ -28,15 +42,8 @@ router.get('/:model', (req, res, next) => {
     limit = MAX_ROW_LIMIT;
   }
 
-  let model = Models.models[req.params.model];
-  let schema = Models.schemas[req.params.model];
-  if (!model) {
-    return next(new Error(`Model ${req.params.model} could not be found`));
-  } else if (!schema) {
-    return next(new Error(`Schema ${req.params.model} could not be found`));
-  }
-
   let where = processFilters(req.query.filter, schema);
+
   model.findAll({
     limit: limit,
     offset: (page - 1) * limit,
@@ -50,9 +57,58 @@ router.get('/:model', (req, res, next) => {
   });
 });
 
-router.post('/', (req, res, next) => {
+router.get('/:model/row/:id', validateModel, (req, res, next) => {
+  let model = req.data.model;
+  let id = req.params.id;
+  model.findById(id).then((row) => {
+    if (!row) {
+      return res.status(404).json({
+        error: `${req.params.model} with id ${id} could not be found`
+      });
+    } else {
+      return res.json(row);
+    }
+  }).catch((err) => {
+    return next(err);
+  });
+});
+
+router.post('/:model', validateModel, (req, res, next) => {
+  let model = req.data.model;
+
   let data = req.body;
 
+  // don't bother with sanitization here -- validators
+  // attached to the object will take care of it
+  model.create(data).then((result) => {
+    return res.json(result.dataValues);
+  }).catch((err) => {
+    return next(err);
+  });
+});
+
+router.put('/:model/row/:id', validateModel, (req, res, next) => {
+  let model = req.data.model;
+  let id = req.params.id;
+
+  let data = req.body;
+
+  // TODO may want to check for some sort of permissions
+  // here
+  // don't bother with sanitization here -- validators
+  // attached to the object will take care of it
+  model.update(data, {
+    where: { id: id }
+  }).then((result) => {
+    return res.json({ msg: 'Update successful' });
+  }).catch((err) => {
+    return next(err);
+  });
+
+});
+
+router.post('/', (req, res, next) => {
+  let data = req.body;
   Models.create({
     displayName: data.displayName,
     columns: data.columns
@@ -100,7 +156,8 @@ function processFilters(filters, schema) {
 
     // if the column name isn't a valid member of the schema,
     // skip over it
-    if (schema && schema._cms_.table.columns.indexOf(column) === -1) {
+    let columnNames = _.map(schema._cms_.table.columns, (col) => col.name);
+    if (schema && columnNames.indexOf(column) === -1) {
       return;
     }
 
@@ -119,4 +176,22 @@ function processFilters(filters, schema) {
   });
 
   return where;
+}
+
+function validateModel(req, res, next) {
+
+  let model = Models.models[req.params.model];
+  let schema = Models.schemas[req.params.model];
+
+  if (!model) {
+    return next(new Error(`Model ${req.params.model} could not be found`));
+  } else if (!schema) {
+    return next(new Error(`Schema ${req.params.model} could not be found`));
+  }
+
+  req.data = req.data || {};
+  req.data.model = model;
+  req.data.schema = schema;
+
+  return next();
 }

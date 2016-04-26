@@ -5,7 +5,11 @@
 
 // components
 @import '../components/models/create/column/column';
+@import '../components/models/rows/edit/column/column';
+@import '../components/models/rows/row/row';
 
 // views
 @import '../views/models/create';
-
+@import '../views/models/rows';
+@import '../views/models/row/edit';
+@import '../views/models/row/create';

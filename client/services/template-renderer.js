@@ -8,7 +8,11 @@ const ComponentFactory = require('./component-factory');
 
 function TemplateRenderer() {
   this._templates = {};
-  this._root = JSON.parse($('#hbs-root').remove().html());
+  try {
+    this._root = JSON.parse($('#hbs-root').remove().html());
+  } catch (e) {
+    this._root = {};
+  }
 }
 
 TemplateRenderer.prototype.renderTemplate = function(name, data) {

@@ -1,0 +1,23 @@
+[data-component="models_rows_edit_column"] {
+  > label {
+    > p {
+      text-transform: capitalize;
+    }
+    margin-bottom: 36px;
+    display: block;
+  }
+
+  .row {
+    margin-bottom: 18px;
+  }
+
+  .directory-wrapper {
+    display: flex;
+    align-items: center;
+    margin-top: 11px;
+
+    > .hci-uploads-url {
+      margin-right: 11px;
+    }
+  }
+}

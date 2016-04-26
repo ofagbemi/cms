@@ -26,8 +26,12 @@
       margin-top: 40px;
       display: flex;
 
-      > button.finish {
+      > button.add-column {
         margin-left: auto;
+      }
+
+      > button.finish {
+        margin-left: 18px;
       }
     }
   }

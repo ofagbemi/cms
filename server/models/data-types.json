@@ -31,6 +31,10 @@
     }
   },
   "file": {
-
+    "sequelizeType": "STRING",
+    "sequelizeTypeArgs": [1024],
+    "sequelizeValidate": {
+      "isUrl": true
+    }
   }
 }

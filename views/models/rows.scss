@@ -1,0 +1,34 @@
+#models_rows {
+  h2 {
+    margin-top: 84px;
+  }
+
+  table {
+    margin-top: 48px;
+    tr {
+      > :first-child {
+        padding-left: 24px;
+      }
+      > :last-child {
+        padding-right: 24px;
+      }
+    }
+
+    thead {
+      > tr {
+        > th {
+
+          font-weight: 600;
+          text-align: left;
+          text-transform: uppercase;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          max-width: 200px;
+          padding: 18px 48px 18px 0;
+
+        }
+      }
+    }
+  }
+}

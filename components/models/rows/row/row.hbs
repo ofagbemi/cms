@@ -1,0 +1,12 @@
+
+<tr data-component="models_rows_row">
+  {{#each columns}}
+  <td>
+    {{!-- Link to /models/Schema/row/id#columnName --}}
+    <a href="/models/
+      {{~ ../schema._cms_.table.name }}/row/
+      {{~ at "id" ../this }}#
+      {{~ name }}">{{ at name ../this }}</a>
+  </td>
+  {{/each}}
+</tr>

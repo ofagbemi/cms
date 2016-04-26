@@ -1,0 +1,21 @@
+#models_row_edit {
+  h2 {
+    margin-top: 84px;
+  }
+
+  > form {
+    margin-top: 48px;
+
+    > footer {
+      display: flex;
+
+      button.save {
+        margin-left: 18px;
+      }
+
+      button.cancel {
+        margin-left: auto;
+      }
+    }
+  }
+}
