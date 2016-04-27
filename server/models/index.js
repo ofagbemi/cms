@@ -14,6 +14,11 @@ const DATA_TYPES = require('./data-types.json');
 const SEQUELIZE_DEFINE_OPTS = {
   freezeTableName: true
 };
+const COLUMN_PARAMS_WHITELIST = [
+  'defaultDirectory',
+  'displayName',
+  'type'
+];
 
 class Models {
   constructor() {
@@ -248,7 +253,7 @@ function sanitizeDisplayName(displayName) {
  * @returns {object}
  */
 function sanitizeColumn(column) {
-  let sanitized = _.pick(column, 'displayName', 'type');
+  let sanitized = _.pick(column, ...COLUMN_PARAMS_WHITELIST);
   sanitized.displayName = sanitizeDisplayName(sanitized.displayName);
   if (!DATA_TYPES[sanitized.type]) {
     sanitized.type = 'string';

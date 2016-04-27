@@ -5,7 +5,9 @@ import _ from 'underscore';
 import {trim} from 'underscore.string';
 
 import util from '../../../../shared/util';
+import TemplateRenderer from '../../../../client/services/template-renderer';
 
+const EXTRAS_TEMPLATES_PATH = 'models/create/column/extras';
 class ModelsCreateColumn {
   constructor(el) {
     this.$el = $(el);
@@ -19,9 +21,12 @@ ModelsCreateColumn.prototype.init = function() {
 
   this.$columnDisplayName = this.$el.find('input[type="text"].column-display-name');
   this.$type = this.$el.find('select[name="type"]');
+  this.$extras = this.$el.find('> .extras');
 
-  this.$el.on('keyup', this.$columnDisplayName,
+  this.$el.on('keyup', 'input[type="text"].column-display-name',
               _.bind(this._handleColumnDisplayNameKeyup, this));
+  this.$el.on('change', 'select[name="type"]',
+              _.bind(this._handleSelectType, this));
 };
 
 ModelsCreateColumn.prototype._handleColumnDisplayNameKeyup = function(e) {
@@ -37,11 +42,33 @@ ModelsCreateColumn.prototype._handleColumnDisplayNameKeyup = function(e) {
   }
 };
 
+ModelsCreateColumn.prototype._handleSelectType = function() {
+  let type = this.$type.val();
+  if (!type) { return; }
+
+  let $e = TemplateRenderer.renderTemplate(`${EXTRAS_TEMPLATES_PATH}/${type}`);
+  this.$extras.html($e);
+};
+
+ModelsCreateColumn.prototype.getExtras = function() {
+  let obj = {};
+  let type = this.$type.val();
+  switch (type) {
+    case 'file':
+      let defaultDirectory = this.$el.find('.extras input[type="text"][name="directory"]').val();
+      obj.defaultDirectory = defaultDirectory;
+      break;
+  }
+  return obj;
+};
+
 ModelsCreateColumn.prototype.getData = function() {
-  return {
+  let obj = {
     displayName: this.$columnDisplayName.val(),
     type: this.$type.val()
   };
+  _.extend(obj, this.getExtras());
+  return obj;
 };
 
 module.exports = ModelsCreateColumn;
