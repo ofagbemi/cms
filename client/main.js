@@ -14,6 +14,7 @@ _.each(hbsHelpers, (fn, name) => {
 ComponentFactory.registerComponent('models_create_column', require('../components/models/create/column/column'));
 TemplateRenderer.registerTemplate('models/create/column/column', require('../components/models/create/column/column.hbs'));
 TemplateRenderer.registerTemplate('models/create/column/extras/file', require('../components/models/create/column/extras/file.hbs'));
+TemplateRenderer.registerTemplate('models/create/column/extras/string', require('../components/models/create/column/extras/string.hbs'));
 
 ComponentFactory.registerComponent('models_rows_edit_column', require('../components/models/rows/edit/column/column'));
 
