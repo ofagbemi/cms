@@ -7,8 +7,7 @@ const _      = require('underscore');
 const async  = require('async');
 const trim   = require('underscore.string/trim');
 const router = require('express').Router();
-const upload = require('../../../server/upload').upload;
-const resave = require('../../../server/upload').resave;
+const upload = require('../../../server/upload');
 
 function getFileStreamCallback(form) {
   return (callback) => {

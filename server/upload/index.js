@@ -11,12 +11,7 @@ const startsWith = require('underscore.string/startsWith');
 const randomstring = require('randomstring');
 const EventEmitter = require('events').EventEmitter;
 
-function Uploader() {
-  EventEmitter.call(this);
-}
-inherits(Uploader, EventEmitter);
-
-Uploader.prototype._connect = function(callback) {
+function connect(callback) {
   let connection = new ssh2.Client();
   connection.on('ready', () => {
     connection.sftp(callback);
@@ -27,9 +22,18 @@ Uploader.prototype._connect = function(callback) {
     password: process.env.SSH_PASS
   });
   return connection;
-};
+}
 
-Uploader.prototype.upload = function(fileStreamCallback, pathStreamCallback, cb) {
+/**
+ * @param {function} fileCallbackReceiver - gets passed a callback that it
+ * should pass a stream to
+ * @param {function} pathCallbackReceiver - gets passed a callback that it
+ * should pass a stream or string that yields a destination directory to
+ * NOTE: any API that calls this should check the passed in path for safety
+ * @param {function} callback gets passed `err` and object with `fullPath`
+ * member
+ */
+module.exports = function upload(fileStreamCallback, pathStreamCallback, cb) {
   cb = cb || _.noop;
 
   async.parallel({
@@ -37,7 +41,7 @@ Uploader.prototype.upload = function(fileStreamCallback, pathStreamCallback, cb)
     // uploads directory
     file: (callback) => {
       fileStreamCallback((filePart) => {
-        let connection = this._connect((err, sftp) => {
+        let connection = connect((err, sftp) => {
 
           if (err) { return callback(err); }
 
@@ -93,7 +97,7 @@ Uploader.prototype.upload = function(fileStreamCallback, pathStreamCallback, cb)
 
     // connect again to move the file to its final
     // destination
-    let connection = this._connect((err, sftp) => {
+    connect((err, sftp) => {
 
       if (err) { return cb(err); }
 
@@ -214,17 +218,3 @@ function createDirectoryTree(destPath, sftp, callback) {
     });
   });
 }
-
-let exp = new Uploader();
-/**
- * @param {function} fileCallbackReceiver - gets passed a callback that it
- * should pass a stream to
- * @param {function} pathCallbackReceiver - gets passed a callback that it
- * should pass a stream or string that yields a destination directory to
- * NOTE: any API that calls this should check the passed in path for safety
- * @param {function} callback gets passed `err` and object with `fullPath`
- * member
- */
-exports.upload = function(fileCallbackReceiver, pathCallbackReceiver, callback) {
-  return exp.upload(fileCallbackReceiver, pathCallbackReceiver, callback);
-};
