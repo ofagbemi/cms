@@ -26,10 +26,8 @@ router.get('/', (req, res, next) => {
 
 router.get('/create', (req, res, next) => {
   res.render('models/create', {
-    _cms_: {
-      dataTypes: DATA_TYPES,
-      dataTypeLabels: DATA_TYPE_LABELS
-    }
+    dataTypes: DATA_TYPES,
+    dataTypeLabels: DATA_TYPE_LABELS
   });
 });
 
