@@ -4,6 +4,9 @@ const urlJoin = require('url-join');
 const _       = require('underscore');
 const capitalize = require('underscore.string/capitalize');
 
+const HCI_ROOT_URL = 'http://hci.stanford.edu';
+const HCI_UPLOADS_URL = 'http://hci.st/uploads';
+
 exports.capitalize = (string) => {
   return capitalize(string);
 };
@@ -38,14 +41,13 @@ exports.xif = (l, op, r, options) => {
       success = l.indexOf(r) !== -1;
       break;
   }
-
   return success ? options.fn(this) : options.inverse(this);
 };
 
 exports.hciRootUrl = (url) => {
-  return urlJoin(process.env.HCI_ROOT_URL, url);
+  return urlJoin(HCI_ROOT_URL, url);
 };
 
 exports.hciUploadsUrl = (url) => {
-  return urlJoin(process.env.HCI_UPLOADS_URL, url);
+  return urlJoin(HCI_UPLOADS_URL, url);
 };

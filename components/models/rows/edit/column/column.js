@@ -80,7 +80,7 @@ class FileType {
     });
 
     let directory = this.$directory.val();
-    formData.append('directory', '/');
+    formData.append('directory', directory || '/');
 
     let url = '/api/upload';
     $.ajax(url, {
@@ -101,7 +101,6 @@ class FileType {
 FileType.prototype.init = function() { /* */ };
 
 FileType.prototype._handleUseDefaultDirectory = function() {
-  console.log(this.$useDefaultDirectory, this.$directory);
   if (this.$useDefaultDirectory.get(0).checked) {
     this.$directory.attr('disabled', true).val('');
   } else {
