@@ -7,6 +7,14 @@ class ModelsRowEdit {
   constructor($el) {
     this.$el = $el;
   }
+
+  get createMode() {
+    return this.$el.get(0).hasAttribute('data-create');
+  }
+
+  get editMode() {
+    return !this.createMode;
+  }
 }
 
 ModelsRowEdit.prototype.init = function() {

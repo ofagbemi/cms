@@ -37,8 +37,9 @@ router.get('/:model/create', (req, res, next) => {
   let modelName = req.params.model;
   getLoadSchemaParallelFn(modelName)((err, schema) => {
     if (err) { return next(err); }
-    res.render('models/row/create', {
-      schema: schema
+    res.render('models/row/edit', {
+      schema: schema,
+      createMode: true
     });
   });
 });

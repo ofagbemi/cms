@@ -1,4 +1,17 @@
 #models_row_edit {
+
+  &[data-create] {
+    > form > footer button.save {
+      display: none;
+    }
+  }
+
+  &:not([data-create]) {
+    > form > footer button.create {
+      display: none;
+    }
+  }
+
   h2 {
     margin-top: 84px;
   }
@@ -9,7 +22,7 @@
     > footer {
       display: flex;
 
-      button.save {
+      button.primary {
         margin-left: 18px;
       }
 
