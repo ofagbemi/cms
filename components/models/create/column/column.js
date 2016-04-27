@@ -5,6 +5,7 @@ import _ from 'underscore';
 import {trim} from 'underscore.string';
 
 import util from '../../../../shared/util';
+import ComponentFactory from '../../../../client/services/component-factory';
 import TemplateRenderer from '../../../../client/services/template-renderer';
 
 const EXTRAS_TEMPLATES_PATH = 'models/create/column/extras';
@@ -52,12 +53,10 @@ ModelsCreateColumn.prototype._handleSelectType = function() {
 
 ModelsCreateColumn.prototype.getExtras = function() {
   let obj = {};
-  let type = this.$type.val();
-  switch (type) {
-    case 'file':
-      let defaultDirectory = this.$el.find('.extras input[type="text"][name="directory"]').val();
-      obj.defaultDirectory = defaultDirectory;
-      break;
+  let $currentExtras = this.$extras.children().first();
+  if ($currentExtras.length) {
+    let extrasComponent = ComponentFactory.getComponent($currentExtras);
+    _.extend(obj, extrasComponent.getData());
   }
   return obj;
 };
