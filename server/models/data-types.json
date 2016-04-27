@@ -34,7 +34,7 @@
     "sequelizeType": "STRING",
     "sequelizeTypeArgs": [1024],
     "sequelizeValidate": {
-      "notEmpty": true,
+      "is": ["^([\/]uploads)"],
       "notContains": [["..", "./", "~", "!"]]
     }
   }
