@@ -10,10 +10,11 @@
   {{/xif}}
 
   {{#xif type '===' 'file'}}
-
   {{#if ( at ../name ../row ) }}
   <div class="row">
-    <a href="{{ at ../../name ../../row }}">{{ hciRootUrl ( at ../../name ../../row ) }}</a>
+    <a target="_blank" href="{{ hciRootUrl (at ../name ../row) }}">
+      {{~ hciRootUrl ( at ../name ../row ) ~}}
+    </a>
   </div>
   {{/if}}
 
@@ -37,6 +38,5 @@
       </div>
     </label>
   </div>
-
   {{/xif}}
 </div>
