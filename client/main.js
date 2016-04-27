@@ -17,7 +17,6 @@ TemplateRenderer.registerTemplate('models/create/column/extras/file', require('.
 
 ComponentFactory.registerComponent('models_rows_edit_column', require('../components/models/rows/edit/column/column'));
 
-
 // views
 const ModelsCreateView = require('../views/models/create');
 ModelsCreateView.init();

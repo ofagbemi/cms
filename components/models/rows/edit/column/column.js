@@ -101,7 +101,6 @@ class FileType {
 FileType.prototype.init = function() { /* */ };
 
 FileType.prototype._handleUseDefaultDirectory = function() {
-  console.log(this.$useDefaultDirectory, this.$directory);
   if (this.$useDefaultDirectory.get(0).checked) {
     this.$directory.attr('disabled', true).val('');
   } else {
