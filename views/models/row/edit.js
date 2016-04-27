@@ -48,7 +48,7 @@ ModelsRowEdit.prototype._handleSubmit = function(e) {
     }
 
     let data = this.getData();
-    let url = `/models/${this.data.schema._cms_.table.name}`;
+    let url = `/models/${this.data.schema.name}`;
 
     if (this.editMode) {
       url += `/row/${this.data.row.id}`;

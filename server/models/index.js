@@ -89,11 +89,11 @@ Models.prototype.create = function(params, callback) {
  */
 Models.prototype._writeJSON = function(json, callback) {
   callback = callback || _.noop;
-  if (!json || !json._cms_ || !json._cms_.table || !json._cms_.table.name) {
+  if (!json || !json.name) {
     return callback(new Error('No table name provided'));
   }
 
-  let tableName = json._cms_.table.name;
+  let tableName = json.name;
   let writePath = path.join(__dirname, 'lib/', tableName + '.json');
 
   fs.open(writePath, 'w', (err, fd) => {
@@ -118,7 +118,7 @@ Models.prototype._loadModel = function(name, callback) {
 
   let modelJSON = require('./lib/' + name + '.json');
   this._schemas[name] = modelJSON;
-  let model = this._sequelize.import(name, createImportCallback({
+  let model =  this._models[name] = this._sequelize.import(name, createImportCallback({
     table: name,
     modelJSON: modelJSON
   }));
@@ -216,27 +216,17 @@ function defineModel(modelJSON, params) { // TODO: use destructring when availab
  */
 function toSequelizeFormat(modelJSON, types) {
   let sequelized = {};
-  for (let key in modelJSON) {
-
-    if (!modelJSON.hasOwnProperty(key) || key.indexOf('_cms_') === 0) {
-      continue;
+  _.each(modelJSON.columns, (column) => {
+    let dataTypeSpec = DATA_TYPES[column.type];
+    let sequelizeType = types[dataTypeSpec.type];
+    if (dataTypeSpec.typeArgs) {
+      sequelizeType = sequelizeType(...dataTypeSpec.typeArgs);
     }
-
-    let value = modelJSON[key];
-    if (key === 'sequelizeType') {
-      let type = types[value];
-      if (modelJSON.sequelizeTypeArgs) {
-        type = type(...modelJSON.sequelizeTypeArgs);
-      }
-      sequelized.type = type;
-    } else if (key === 'sequelizeValidate') {
-      sequelized.validate = value;
-    } else if (_.isObject(value)) {
-      sequelized[key] = toSequelizeFormat(value, types);
-    } else {
-      sequelized[key] = value;
-    }
-  }
+    sequelized[column.name] = {
+      type: sequelizeType,
+      validate: dataTypeSpec.validate
+    };
+  });
   return sequelized;
 }
 
@@ -273,7 +263,6 @@ function getJSON(params) {
   let displayName = sanitizeDisplayName(params.displayName);
   let columns = _.map(params.columns, sanitizeColumn);
 
-  let json = {};
   let columnsJSON = [];
   for (let column of columns) {
     let name = util.getColumnName(column.displayName);
@@ -282,18 +271,14 @@ function getJSON(params) {
       displayName: column.displayName,
       type: column.type
     }, getSchemaExtras(column)));
-    json[name] = DATA_TYPES[column.type];
   }
 
   let tableName = util.getTableName(displayName);
-  json._cms_ = {
-    table: {
-      name: tableName,
-      displayName: displayName,
-      columns: columnsJSON
-    }
+  return {
+    name: tableName,
+    displayName: displayName,
+    columns: columnsJSON
   };
-  return json;
 }
 
 /**

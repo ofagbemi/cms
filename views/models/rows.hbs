@@ -1,22 +1,18 @@
 <div id="models_rows">
-  <h2>{{ schema._cms_.table.name }}</h2>
+  <h2>{{ schema.name }}</h2>
 
   <table>
     <thead>
-      {{#each schema._cms_.table.columns}}
+      {{#each schema.columns}}
         <th>
           <p>{{ displayName }}</p>
         </th>
       {{/each}}
     </thead>
     <tbody>
-      {{#with schema._cms_.table}}
-      {{#each ../rows}}
-
-      {{> models/rows/row/row this columns=../columns schema=../../schema}}
-
+      {{#each rows}}
+      {{> models/rows/row/row this schema=../schema}}
       {{/each}}
-      {{/with}}
     </tbody>
   </table>
 </div>
