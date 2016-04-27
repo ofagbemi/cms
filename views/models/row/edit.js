@@ -1,3 +1,6 @@
+'use strict';
+
+const async = require('async');
 const _ = require('underscore');
 const $ = require('jquery');
 
@@ -24,7 +27,6 @@ ModelsRowEdit.prototype.init = function() {
   if (this._init) { return; }
   this._init = true;
 
-
   try {
     this.data = JSON.parse(this.$el.find('script.model-data').remove().html());
   } catch (e) {
@@ -38,16 +40,47 @@ ModelsRowEdit.prototype.init = function() {
 ModelsRowEdit.prototype._handleSubmit = function(e) {
   e.preventDefault();
 
-  let data = this.getData();
-  let url = `/models/${this.data.schema._cms_.table.name}/row/${this.data.row.id}`;
-  $.ajax(url, {
-    type: 'PUT',
-    data: data,
-    xhrFields: { withCredentials: true }
-  }).done((response) => {
-    window.location = response.redirectUrl;
-  }).fail((xhr, status, err) => {
-    // do something
+  this.upload((err, result) => {
+
+    if (err) {
+      // TODO: handle error
+      return;
+    }
+
+    let data = this.getData();
+    let url = `/models/${this.data.schema._cms_.table.name}`;
+
+    if (this.editMode) {
+      url += `/row/${this.data.row.id}`;
+    }
+
+    $.ajax(url, {
+      type: this.editMode ? 'PUT' : 'POST',
+      data: data,
+      xhrFields: { withCredentials: true }
+    }).done((response) => {
+      window.location = response.redirectUrl;
+    }).fail((xhr, status, err) => {
+      // TODO: do something
+    });
+  });
+};
+
+ModelsRowEdit.prototype.upload = function(callback) {
+
+  let parallelFns = [];
+  this.$el.find('[data-component="models_rows_edit_column"]').each((i, el) => {
+    let component = ComponentFactory.getComponent(el);
+    if (component.changed && _.isFunction(component.upload)) {
+      parallelFns.push((cb) => {
+        component.upload(cb);
+      });
+    }
+  });
+
+  async.parallel(parallelFns, (err, result) => {
+    if (err) { return callback(err); }
+    callback(null, result);
   });
 };
 
@@ -56,9 +89,7 @@ ModelsRowEdit.prototype.getData = function() {
   this.$el.find('[data-component="models_rows_edit_column"]').each((i, el) => {
     let component = ComponentFactory.getComponent(el);
     if (component.changed) {
-      let obj = {};
-      obj[component.columnName] = component.value;
-      _.extend(data, obj);
+      _.extend(data, component.getData());
     }
   });
   return data;
