@@ -4,12 +4,15 @@
 
   {{#xif type '===' 'string'}}
   <label>
-    <p>{{ ../displayName }}</p>
+    <p class="name">{{ ../displayName }}</p>
     <input type="text" name="{{ ../name }}" value="{{ at ../name ../row }}">
   </label>
   {{/xif}}
 
   {{#xif type '===' 'file'}}
+
+  <p class="name">{{ ../displayName }}</p>
+
   {{#if ( at ../name ../row ) }}
   <div class="row">
     <a target="_blank" href="{{ hciRootUrl (at ../name ../row) }}">

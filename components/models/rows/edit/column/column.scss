@@ -1,4 +1,12 @@
 [data-component="models_rows_edit_column"] {
+  > p.name {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: solid 1px $wild-sand;
+  }
+
   > label {
     > p {
       text-transform: capitalize;
