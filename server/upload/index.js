@@ -5,8 +5,9 @@ const fs     = require('fs');
 const ssh2   = require('ssh2');
 const path   = require('path');
 const sha256 = require('sha256');
-const async = require('async');
+const async  = require('async');
 const inherits = require('inherits');
+const startsWith = require('underscore.string/startsWith');
 const randomstring = require('randomstring');
 const EventEmitter = require('events').EventEmitter;
 
@@ -107,26 +108,123 @@ Uploader.prototype.upload = function(fileStreamCallback, pathStreamCallback, cb)
         result.file.filename
       );
 
-      sftp.rename(result.file.tmpPath, fullPath, (err) => {
-        if (err) {
-          let msg = `Error renaming file ${result.file.tmpPath} to ${fullPath}`;
+      let tmpPath = result.file.tmpPath;
+
+      createDirectoryTree(result.destPath, sftp).then((directory) => {
+        destructiveRename(sftp, tmpPath, fullPath).then(() => {
+          cleanupTmpFile(sftp, tmpPath).then(() => {
+            return cb(null, { path: relPath });
+          }).catch((err) => {
+            console.log(`Failed to clean up tmp file at ${tmpPath}.\n` +
+                        `Returning success anyway...`);
+            return cb(null, {
+              path: relPath,
+              info: `Failed to clean up tmp file at ${tmpPath}`
+            });
+          });
+        }).catch((err) => {
+          let msg = `Error renaming file ${tmpPath} to ${fullPath}`;
           return cb(new Error(msg));
-        }
-        return cb(null, { path: relPath });
+        });
+      }).catch((err) => {
+        let msg = `Error creating directory tree '${result.destPath}' ${err}`;
+        return cb(new Error(msg));
       });
     });
   });
 };
 
+function destructiveRename(sftp, src, dest) {
+  let readStream = sftp.createReadStream(src);
+  let writeStream = sftp.createWriteStream(dest);
+
+  return new Promise((resolve, reject) => {
+    readStream.on('end', () => {
+      resolve();
+    }).on('error', (err) => {
+      reject(err);
+    });
+    readStream.pipe(writeStream);
+  });
+}
+
+function cleanupTmpFile(sftp, tmpPath) {
+  tmpPath = startsWith(tmpPath, process.env.UPLOADS_TMP_DIR) ?
+    tmpPath : path.join(process.env.UPLOADS_TMP_DIR, tmpPath);
+  return new Promise((resolve, reject) => {
+    sftp.unlink(tmpPath, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+/**
+ * @param {string} destPath - the directory relative to the HCI server's
+ * uploads directory
+ * @param {SFTPStream} sftp
+ * @param {function} callback
+ * @returns {Promise}
+ */
+function createDirectoryTree(destPath, sftp, callback) {
+  let p = destPath.split('/');
+
+  // join the root of the relative path with the full path
+  // to the uploads directory
+  let root = path.join(process.env.UPLOADS_DIR, p.shift());
+  let fns = _.map(p, (part) => {
+    return (createdDirectory, cb) => {
+      let pathToCreate = path.join(createdDirectory, part);
+      sftp.mkdir(pathToCreate, (err) => {
+        // assume if the error code is 4 that the directory
+        // already existed
+        if (!err || err.code === 4) {
+          return cb(null, pathToCreate);
+        } else {
+          return cb(err);
+        }
+      });
+    };
+  });
+
+  // different function for the root directory
+  fns.unshift((cb) => {
+    sftp.mkdir(root, (err) => {
+      // assume if the error code is 4 that the directory
+      // already existed
+      if (!err || err.code === 4) {
+        return cb(null, root);
+      } else {
+        return cb(err);
+      }
+    });
+  });
+
+
+  return new Promise((resolve, reject) => {
+    async.waterfall(fns, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+}
+
 let exp = new Uploader();
 /**
- * @param {function} fileCallback - should pass a stream to the caller
- * @param {function} pathCallback - should pass a stream or string to the caller
- * that yields a destination directory
+ * @param {function} fileCallbackReceiver - gets passed a callback that it
+ * should pass a stream to
+ * @param {function} pathCallbackReceiver - gets passed a callback that it
+ * should pass a stream or string that yields a destination directory to
  * NOTE: any API that calls this should check the passed in path for safety
  * @param {function} callback gets passed `err` and object with `fullPath`
  * member
  */
-exports.upload = function(fileCallback, pathCallback, callback) {
-  return exp.upload(fileCallback, pathCallback, callback);
+exports.upload = function(fileCallbackReceiver, pathCallbackReceiver, callback) {
+  return exp.upload(fileCallbackReceiver, pathCallbackReceiver, callback);
 };
