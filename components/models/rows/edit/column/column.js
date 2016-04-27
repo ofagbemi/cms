@@ -80,7 +80,7 @@ class FileType {
     });
 
     let directory = this.$directory.val();
-    formData.append('directory', '/');
+    formData.append('directory', directory || '/');
 
     let url = '/api/upload';
     $.ajax(url, {
