@@ -43,6 +43,30 @@ h4 {
   font-style: italic;
 }
 
+a {
+  text-decoration: none;
+  color: $eastern-blue;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:active {
+    color: $gothic;
+  }
+
+  &[target="_blank"]::after {
+    content: '';
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background-image: url('/res/images/icons/external-link.svg');
+    background-size: 9px;
+    background-position: top right;
+    background-repeat: no-repeat;
+  }
+}
+
 button {
   height: 44px;
   width: 255px;
@@ -73,7 +97,7 @@ button {
 input[type="text"].large {
   width: 100%;
   padding: 16px 0;
-  font-family: 'Playfair Display', 'Georgia', serif;
+  font-family: 'Merriweather', 'Georgia', serif;
   font-size: 36px;
   appearance: none;
   border: none;
