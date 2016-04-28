@@ -4,6 +4,7 @@ import async from 'async';
 import _ from 'underscore';
 import $ from 'jquery';
 
+import Loading from '../../../components/loading/loading';
 import ComponentFactory from '../../../client/services/component-factory';
 
 class ModelsRowEdit {
@@ -40,9 +41,11 @@ ModelsRowEdit.prototype.init = function() {
 ModelsRowEdit.prototype._handleSubmit = function(e) {
   e.preventDefault();
 
+  Loading.loading(this.$el);
   this.upload((err, result) => {
 
     if (err) {
+      Loading.finish(this.$el);
       // TODO: handle error
       return;
     }
@@ -59,8 +62,10 @@ ModelsRowEdit.prototype._handleSubmit = function(e) {
       data: data,
       xhrFields: { withCredentials: true }
     }).done((response) => {
+      Loading.finish(this.$el);
       window.location = response.redirectUrl;
     }).fail((xhr, status, err) => {
+      Loading.finish(this.$el);
       // TODO: do something
     });
   });
