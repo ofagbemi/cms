@@ -7,7 +7,7 @@ class ComponentFactory {
   constructor() {
     this._components = {};
   }
-};
+}
 
 /**
  * @param {string} name

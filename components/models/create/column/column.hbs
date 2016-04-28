@@ -10,8 +10,7 @@
       <p>Type</p>
       <select name="type">
         <option disabled selected>Choose a data type</option>
-
-        {{#each @root._cms_.dataTypeLabels}}
+        {{#each @root.dataTypeLabels}}
         <option value="{{ this }}">{{capitalize this}}</option>
         {{/each}}
       </select>

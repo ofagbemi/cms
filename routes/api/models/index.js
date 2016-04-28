@@ -156,7 +156,7 @@ function processFilters(filters, schema) {
 
     // if the column name isn't a valid member of the schema,
     // skip over it
-    let columnNames = _.map(schema._cms_.table.columns, (col) => col.name);
+    let columnNames = _.map(schema.columns, (col) => col.name);
     if (schema && columnNames.indexOf(column) === -1) {
       return;
     }

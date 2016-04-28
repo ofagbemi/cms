@@ -1,39 +1,39 @@
 {
   "string": {
-    "sequelizeType": "STRING"
+    "type": "STRING"
   },
   "text": {
-    "sequelizeType": "TEXT"
+    "type": "TEXT"
   },
   "integer": {
-    "sequelizeType": "INTEGER"
+    "type": "INTEGER"
   },
   "double": {
-    "sequelizeType": "DOUBLE"
+    "type": "DOUBLE"
   },
   "date": {
-    "sequelizeType": "DATE"
+    "type": "DATE"
   },
   "boolean": {
-    "sequelizeType": "BOOLEAN"
+    "type": "BOOLEAN"
   },
   "email": {
-    "sequelizeType": "STRING",
-    "sequelizeValidate": {
+    "type": "STRING",
+    "validate": {
       "isEmail": true
     }
   },
   "url": {
-    "sequelizeType": "STRING",
-    "sequelizeTypeArgs": [1024],
-    "sequelizeValidate": {
+    "type": "STRING",
+    "typeArgs": [1024],
+    "validate": {
       "isUrl": true
     }
   },
   "file": {
-    "sequelizeType": "STRING",
-    "sequelizeTypeArgs": [1024],
-    "sequelizeValidate": {
+    "type": "STRING",
+    "typeArgs": [1024],
+    "validate": {
       "is": ["^([\/]uploads)"],
       "notContains": [["..", "./", "~", "!"]]
     }
