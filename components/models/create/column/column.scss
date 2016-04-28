@@ -1,9 +1,6 @@
 [data-component="models_create_column"] {
-  &:not(:last-child) {
-    margin-bottom: 32px;
-    padding-bottom: 44px;
-    border-bottom: solid 1px $wild-sand;
-  }
+
+  margin-bottom: 48px;
 
   > .initial {
     display: flex;
