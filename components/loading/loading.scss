@@ -40,9 +40,12 @@
 
 [data-loading] {
   &.loading {
-    opacity: 0.4;
     pointer-events: none;
     transition: opacity 200ms ease-out;
+
+    > *:not([data-component="loading"]) {
+      opacity: 0.4;
+    }
 
     &[data-loading-positioned] {
       position: relative;
