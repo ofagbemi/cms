@@ -36,7 +36,8 @@
       <div class="row directory-wrapper">
         <span class="hci-uploads-url">{{ hciUploadsUrl "/" }}</span>
         <input type="text" disabled class="directory"
-               placeholder="path/to/file"
+               data-default="{{ ../defaultDirectory }}"
+               placeholder="path/to/directory"
                value="{{ ../defaultDirectory }}">
       </div>
     </label>

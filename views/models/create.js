@@ -3,6 +3,7 @@
 import $ from 'jquery';
 import _ from 'underscore';
 import {trim} from 'underscore.string';
+import Loading from '../../components/loading/loading';
 import ComponentFactory from '../../client/services/component-factory';
 import TemplateRenderer from '../../client/services/template-renderer';
 
@@ -34,15 +35,19 @@ ModelsCreate.prototype.init = function() {
 
 ModelsCreate.prototype._handleSubmit = function(e) {
   e.preventDefault();
-  let data = this.getData();
 
+  Loading.loading(this.$el);
+
+  let data = this.getData();
   $.ajax('/models', {
     type: 'POST',
     data: data,
     xhrFields: { withCredentials: true }
   }).done((response) => {
+    Loading.finish(this.$el);
     window.location = response.redirectUrl;
   }).fail((xhr, status, err) => {
+    Loading.finish(this.$el);
     // TODO: do something
   });
 };

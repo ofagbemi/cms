@@ -50,6 +50,8 @@ class FileType {
     this.$file = this.$el.find('input[type="file"]');
     this.$useDefaultDirectory = this.$el.find('input[type="checkbox"]');
     this.$directory = this.$el.find('input[type="text"].directory');
+    this.defaultDirectory = this.$directory.attr('data-default');
+
     this._changed = false;
 
     this.columnName = this.$el.attr('data-columnName');
@@ -102,7 +104,7 @@ FileType.prototype.init = function() { /* */ };
 
 FileType.prototype._handleUseDefaultDirectory = function() {
   if (this.$useDefaultDirectory.get(0).checked) {
-    this.$directory.attr('disabled', true).val('');
+    this.$directory.attr('disabled', true).val(this.defaultDirectory);
   } else {
     this.$directory.removeAttr('disabled').focus();
   }
