@@ -1,10 +1,10 @@
 'use strict';
 
-const async = require('async');
-const _ = require('underscore');
-const $ = require('jquery');
+import async from 'async';
+import _ from 'underscore';
+import $ from 'jquery';
 
-const ComponentFactory = require('../../../client/services/component-factory');
+import ComponentFactory from '../../../client/services/component-factory';
 
 class ModelsRowEdit {
   constructor($el) {
