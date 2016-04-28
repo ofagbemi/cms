@@ -11,6 +11,8 @@ _.each(hbsHelpers, (fn, name) => {
 });
 
 // components
+TemplateRenderer.registerTemplate('loading/loading', require('../components/loading/loading.hbs'));
+
 ComponentFactory.registerComponent('models_create_column', require('../components/models/create/column/column'));
 TemplateRenderer.registerTemplate('models/create/column/column', require('../components/models/create/column/column.hbs'));
 
