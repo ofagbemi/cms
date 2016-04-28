@@ -1,9 +1,9 @@
-@import 'colors';
-
+@import 'variables';
 @import 'reset';
 @import 'global';
 
 // components
+@import '../components/loading/loading';
 @import '../components/models/create/column/column';
 @import '../components/models/create/column/extras/file';
 @import '../components/models/rows/edit/column/column';
