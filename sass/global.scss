@@ -131,7 +131,7 @@ label {
     transition: all 250ms;
 
     &[disabled] {
-      background-color: $wild-sand;
+      opacity: 0.4;
     }
 
     &:focus, &:active {
