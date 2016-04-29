@@ -278,7 +278,7 @@ Models.prototype._getJSON = function(params) {
   let columns = _.map(params.columns, _.bind(this._sanitizeColumn, this));
   let references = _.map(params.references,
     _.bind(this._sanitizeReference, this));
-  references = _.compact(references);
+  references = _.unique(_.compact(references));
 
   let columnsJSON = [];
   for (let column of columns) {
