@@ -23,7 +23,8 @@ ModelsCreate.prototype.init = function() {
   this._init = true;
 
   this.$form = this.$el.find('form#create-form');
-  this.$columns = this.$form.find('> .columns');
+  this.$columns = this.$form.find('> .columns-wrapper > .columns');
+  this.$references = this.$form.find('> .references-wrapper > .references');
   this.$displayName = this.$el.find('input[name="displayName"]');
   this.$addColumnButton = this.$form.find('button.add-column');
 
@@ -31,6 +32,13 @@ ModelsCreate.prototype.init = function() {
   this.$addColumnButton.on('click', _.bind(this._handleAddColumn, this));
   this.$el.on('keyup', this.$displayName,
               _.bind(this._handleDisplayNameKeyup, this));
+  this.$el.on('click', '.references > .reference',
+              _.bind(this._handleReferenceClick, this));
+};
+
+ModelsCreate.prototype._handleReferenceClick = function(e) {
+  let $reference = $(e.target);
+  $reference.toggleClass('selected');
 };
 
 ModelsCreate.prototype._handleSubmit = function(e) {

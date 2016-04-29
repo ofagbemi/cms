@@ -25,9 +25,15 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/create', (req, res, next) => {
-  res.render('models/create', {
-    dataTypes: DATA_TYPES,
-    dataTypeLabels: DATA_TYPE_LABELS
+  let url = `${API_URL}/models/schemas?names=true`;
+  request.get(url, (err, response, body) => {
+    if (err) { return next(err); }
+    
+    res.render('models/create', {
+      modelNames: JSON.parse(body),
+      dataTypes: DATA_TYPES,
+      dataTypeLabels: DATA_TYPE_LABELS
+    });
   });
 });
 

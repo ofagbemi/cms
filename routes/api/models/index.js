@@ -16,8 +16,26 @@ const FILTER_REGEXES = [{
   transform: (str) => `%${str}%`
 }];
 
+/**
+ * @api {get} /schemas
+ *
+ * Returns either a JSON hash of every defined schema or, if the `names` flag
+ * is set, an array of the names of every defined schema
+ *
+ * @apiParam [names = false] If set, returns an array of defined model names
+ */
 router.get('/schemas', (req, res) => {
-  res.json(Models.schemas);
+  let names = !!req.query.names;
+  if (names) {
+    let namesArr = [];
+    _.each(Models.schemas, (schema) => {
+      namesArr.push(schema.name);
+    });
+    namesArr.sort();
+    res.json(namesArr);
+  } else {
+    res.json(Models.schemas);
+  }
 });
 
 router.get('/schemas/:model', (req, res, nex) => {
@@ -75,7 +93,6 @@ router.get('/:model/row/:id', validateModel, (req, res, next) => {
 
 router.post('/:model', validateModel, (req, res, next) => {
   let model = req.data.model;
-
   let data = req.body;
 
   // don't bother with sanitization here -- validators
