@@ -11,9 +11,25 @@ exports.getTableName = (displayName) => {
   return pascalcase(n);
 };
 
+/**
+ * @param {string} a
+ * @param {string} b
+ */
+exports.getJoinTableName = (a, b) =>  {
+  let sorted = [a, b].sort();
+  return sorted.join('_');
+};
+
 exports.getColumnName = (displayName) => {
   // replace non-word characters with spaces before camelcase
   // removes them and camelcases properly
   let columnName = trim(displayName).replace(/\W+/g, ' ');
   return camelcase(columnName);
+};
+
+exports.getReferenceName = (displayName) => {
+  // replace non-word characters with spaces before camelcase
+  // removes them and camelcases properly
+  let referenceName = trim(displayName).replace(/\W+/g, ' ');
+  return camelcase(referenceName);
 };

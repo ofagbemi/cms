@@ -32,14 +32,14 @@ ModelsCreateColumn.prototype.init = function() {
 
 ModelsCreateColumn.prototype._handleColumnDisplayNameKeyup = function(e) {
   let $target = $(e.target);
-  let $sub = $target.siblings('.sub');
+  let $caption = $target.siblings('.caption');
   let displayName = trim($target.val());
   if (displayName === '') {
-    $sub.addClass('hide');
+    $caption.addClass('hide');
   } else {
     let columnName = util.getColumnName(displayName);
-    $sub.find('.column-name').text(columnName);
-    $sub.removeClass('hide');
+    $caption.find('.column-name').text(columnName);
+    $caption.removeClass('hide');
   }
 };
 

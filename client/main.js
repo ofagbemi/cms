@@ -16,6 +16,9 @@ TemplateRenderer.registerTemplate('loading/loading', require('../components/load
 ComponentFactory.registerComponent('models_create_column', require('../components/models/create/column/column'));
 TemplateRenderer.registerTemplate('models/create/column/column', require('../components/models/create/column/column.hbs'));
 
+ComponentFactory.registerComponent('models_create_reference', require('../components/models/create/reference/reference'));
+TemplateRenderer.registerTemplate('models/create/reference/reference', require('../components/models/create/reference/reference.hbs'));
+
 ComponentFactory.registerComponent('models_create_column_extras_file', require('../components/models/create/column/extras/file'));
 TemplateRenderer.registerTemplate('models/create/column/extras/file', require('../components/models/create/column/extras/file.hbs'));
 

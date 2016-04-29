@@ -16,6 +16,11 @@ const FILTER_REGEXES = [{
   transform: (str) => `%${str}%`
 }];
 
+/**
+ * @api {get} /schemas
+ *
+ * Returns either a JSON hash of every defined schema
+ */
 router.get('/schemas', (req, res) => {
   res.json(Models.schemas);
 });
@@ -75,7 +80,6 @@ router.get('/:model/row/:id', validateModel, (req, res, next) => {
 
 router.post('/:model', validateModel, (req, res, next) => {
   let model = req.data.model;
-
   let data = req.body;
 
   // don't bother with sanitization here -- validators
@@ -111,7 +115,8 @@ router.post('/', (req, res, next) => {
   let data = req.body;
   Models.create({
     displayName: data.displayName,
-    columns: data.columns
+    columns: data.columns,
+    references: data.references
   }, (err, info) => {
     if (err) { return next(err); }
     res.json({msg: `Saved new table ${info.tableName}`});

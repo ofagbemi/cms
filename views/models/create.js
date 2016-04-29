@@ -23,7 +23,8 @@ ModelsCreate.prototype.init = function() {
   this._init = true;
 
   this.$form = this.$el.find('form#create-form');
-  this.$columns = this.$form.find('> .columns');
+  this.$columns = this.$form.find('> .columns-wrapper > .columns');
+  this.$references = this.$form.find('> .references-wrapper > .references');
   this.$displayName = this.$el.find('input[name="displayName"]');
   this.$addColumnButton = this.$form.find('button.add-column');
 
@@ -31,6 +32,23 @@ ModelsCreate.prototype.init = function() {
   this.$addColumnButton.on('click', _.bind(this._handleAddColumn, this));
   this.$el.on('keyup', this.$displayName,
               _.bind(this._handleDisplayNameKeyup, this));
+  this.$el.on('click', '.reference-tags > .reference',
+              _.bind(this._handleReferenceTagClick, this));
+};
+
+ModelsCreate.prototype._handleReferenceTagClick = function(e) {
+  let referenceTableName = e.target.getAttribute('name');
+  let referenceTableDisplayName = e.target.getAttribute('data-display-name');
+  let $reference = TemplateRenderer.renderTemplate(
+    'models/create/reference/reference',
+    {
+      foreignTable: {
+        name: referenceTableName,
+        displayName: referenceTableDisplayName
+      }
+    });
+
+  this.$references.append($reference);
 };
 
 ModelsCreate.prototype._handleSubmit = function(e) {
@@ -59,25 +77,40 @@ ModelsCreate.prototype._handleAddColumn = function() {
 
 ModelsCreate.prototype._handleDisplayNameKeyup = function(e) {
   let $target = $(e.target);
-  let $sub = $target.siblings('.sub');
+  let $caption = $target.siblings('.caption');
   let displayName = trim($target.val());
   if (displayName === '') {
-    $sub.addClass('hide');
+    $caption.addClass('hide');
   } else {
     let tableName = util.getTableName(displayName);
-    $sub.find('.table-name').text(tableName);
-    $sub.removeClass('hide');
+    $caption.find('.table-name').text(tableName);
+    $caption.removeClass('hide');
   }
+};
+
+ModelsCreate.prototype.getColumns = function() {
+  let columns = [];
+  this.$columns.find('[data-component="models_create_column"]').each((index, el) => {
+    let column = ComponentFactory.getComponent(el);
+    columns.push(column.getData());
+  });
+  return columns;
+};
+
+ModelsCreate.prototype.getReferences = function() {
+  let references = [];
+  this.$references.find('[data-component="models_create_reference"]').each((index, el) => {
+    let reference = ComponentFactory.getComponent(el);
+    references.push(reference.getData());
+  });
+  return references;
 };
 
 ModelsCreate.prototype.getData = function() {
   let data = {};
   data.displayName = this.$displayName.val();
-  data.columns = [];
-  this.$el.find('[data-component="models_create_column"]').each((index, el) => {
-    let column = ComponentFactory.getComponent(el);
-    data.columns.push(column.getData());
-  });
+  data.columns = this.getColumns();
+  data.references = this.getReferences();
   return data;
 };
 

@@ -10,10 +10,8 @@
     header {
       margin-bottom: 48px;
 
-      > .sub {
+      > .caption {
         margin-top: 13px;
-        color: $silver;
-
         transition: all 250ms;
 
         &.hide {
@@ -22,16 +20,18 @@
       }
     }
 
-    > footer {
-      margin-top: 40px;
-      display: flex;
+    .columns-wrapper {
+      > footer {
+        margin-top: 40px;
+        display: flex;
 
-      > button.add-column {
-        margin-left: auto;
-      }
+        > button.add-column {
+          margin-left: auto;
+        }
 
-      > button.finish {
-        margin-left: 18px;
+        > button.finish {
+          margin-left: 18px;
+        }
       }
     }
   }

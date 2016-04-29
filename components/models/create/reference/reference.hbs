@@ -1,0 +1,39 @@
+<div data-component="models_create_reference" data-foreign-table="{{ foreignTable.name }}">
+
+  <h4>
+    Creating reference to
+    <span class="emphasis">
+      {{ foreignTable.displayName }}
+    </span>
+  </h4>
+
+  <label>
+    <p class="caption">
+      This is the name of the record in this model. For example, let's say you're
+      creating a model called ‘Person’. You might use the name ‘author’ for
+      this field.
+    </p>
+    <p>My name</p>
+    <input type="text" name="displayName">
+  </label>
+
+  <label>
+    <p class="caption">This is the name of the record in the model being
+      referenced. For example, let‘s say you‘re <span class="emphasis">referencing</span>
+      a model called ‘Course’. You might use the name ‘favorite courses’ for
+      this field.
+    </p>
+    <p class="caption">
+      Continuing the example from above, this would indicate a relationship
+      between ‘Person’s and ‘Course’s. Here, we want each person to have
+      several ‘favorite courses’, so we reference the ‘Course’ table
+      from the ‘Person’ table.
+    </p>
+    <p>
+      <span class="emphasis">
+        {{~ foreignTable.displayName ~}}
+      </span>‘s name
+    </p>
+    <input type="text" name="foreignDisplayName">
+  </label>
+</div>

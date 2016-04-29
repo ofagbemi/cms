@@ -35,12 +35,17 @@ h1 {
 h2 {
   font-size: 24px;
   font-weight: 400;
+  margin-bottom: 24px;
 }
 
 h4 {
   font-size: 16px;
   font-weight: 200;
-  font-style: italic;
+  margin-bottom: 16px;
+}
+
+p {
+  margin-bottom: 11px;
 }
 
 a {
@@ -67,6 +72,14 @@ a {
   }
 }
 
+.caption {
+  color: $oslo;
+}
+
+.emphasis {
+  font-style: italic;
+}
+
 button {
   height: 44px;
   width: 255px;
@@ -80,7 +93,26 @@ button {
   cursor: pointer;
   background-color: transparent;
 
-  transition: box-shadow 250ms;
+  transition: all 250ms;
+
+  &.tag {
+    width: auto;
+    margin: 0 8px 8px 0;
+    display: inline-block;
+    padding: 11px 14px 8px;
+    background-color: $wild-sand;
+
+    &:hover, &.selected {
+      color: white;
+      background-color: $eastern-blue;
+      box-shadow: none;
+    }
+
+    &:active {
+      color: transparent;
+      background-color: $eastern-blue;
+    }
+  }
 
   &.primary {
     background-color: $mine-shaft;
@@ -89,6 +121,10 @@ button {
 
   &:hover {
     box-shadow: 0px 2px 4px $wild-sand-shadow;
+  }
+
+  &:active {
+    color: transparent;
   }
 }
 

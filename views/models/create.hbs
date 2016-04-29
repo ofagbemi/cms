@@ -3,16 +3,59 @@
 
   <form id="create-form" method="POST" action="/models">
     <header>
-      <h4>Your model's name should be a singular noun, like ‘person’, ‘paper’ or ‘Decepticon’.</h4>
+      <p class="caption">Your model's name should be a singular noun, like ‘person’, ‘paper’ or ‘Decepticon’.</p>
       <input type="text" name="displayName" class="large display-name" placeholder="Untitled model">
-      <p class="sub hide">This table will be named ‘<span class="table-name"></span>’ in the database</p>
+      <p class="caption hide">This table will be named ‘<span class="table-name"></span>’ in the database</p>
     </header>
-    <div class="columns">
-      {{> models/create/column/column}}
+    <div class="columns-wrapper">
+      <h2>Columns</h2>
+      <p class="caption">
+        A <span class="emphasis">column</span> describes a
+        model’s raw attributes, like ‘first name’, ‘id number’, etc.
+      </p>
+      <p class="caption">
+        Avoid any column name that’d resolve to the column name ‘id’. For
+        example, <span class="emphasis">don’t</span> use ‘ID#’ as a column
+        name. Use ‘id number’ instead.
+      </p>
+
+      <div class="columns">
+        {{> models/create/column/column}}
+      </div>
+      <footer>
+        <button type="button" class="add-column">Add column</button>
+        <button type="submit" class="finish primary">Finish</button>
+      </footer>
     </div>
-    <footer>
-      <button type="button" class="add-column">Add column</button>
-      <button type="submit" class="finish primary">Finish</button>
-    </footer>
+    <div class="references-wrapper">
+      <h2>References</h2>
+      <p class="caption">
+        A <span class="emphasis">reference</span> points to another model. Form
+        example, a model named ‘Project’ might reference a model named ‘Person’.
+        This indicates a relationship between these two models—for example, each
+        paper could refer to its multiple authors, and each person could reference
+        multiple papers they've written.
+      </p>
+      <p class="caption">
+        Defining a relationship on one model automatically creates the corresponding
+        reference on the other model.
+      </p>
+      <div class="references">
+
+      </div>
+
+      <p>Select each model you want this one to reference by clicking on its name.</p>
+
+      <div class="reference-tags">
+        {{#each models}}
+          <button class="tag reference"
+                  type="button"
+                  name="{{ name }}"
+                  data-display-name="{{ displayName }}">
+            {{~ displayName ~}}
+          </button>
+        {{/each}}
+      </div>
+    </div>
   </form>
 </div>
