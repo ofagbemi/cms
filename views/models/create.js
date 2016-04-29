@@ -59,14 +59,14 @@ ModelsCreate.prototype._handleAddColumn = function() {
 
 ModelsCreate.prototype._handleDisplayNameKeyup = function(e) {
   let $target = $(e.target);
-  let $sub = $target.siblings('.sub');
+  let $caption = $target.siblings('.caption');
   let displayName = trim($target.val());
   if (displayName === '') {
-    $sub.addClass('hide');
+    $caption.addClass('hide');
   } else {
     let tableName = util.getTableName(displayName);
-    $sub.find('.table-name').text(tableName);
-    $sub.removeClass('hide');
+    $caption.find('.table-name').text(tableName);
+    $caption.removeClass('hide');
   }
 };
 

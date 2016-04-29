@@ -10,10 +10,8 @@
     header {
       margin-bottom: 48px;
 
-      > .sub {
+      > .caption {
         margin-top: 13px;
-        color: $silver;
-
         transition: all 250ms;
 
         &.hide {

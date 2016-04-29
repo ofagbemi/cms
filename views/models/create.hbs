@@ -3,9 +3,9 @@
 
   <form id="create-form" method="POST" action="/models">
     <header>
-      <h4>Your model's name should be a singular noun, like ‘person’, ‘paper’ or ‘Decepticon’.</h4>
+      <p class="caption">Your model's name should be a singular noun, like ‘person’, ‘paper’ or ‘Decepticon’.</p>
       <input type="text" name="displayName" class="large display-name" placeholder="Untitled model">
-      <p class="sub hide">This table will be named ‘<span class="table-name"></span>’ in the database</p>
+      <p class="caption hide">This table will be named ‘<span class="table-name"></span>’ in the database</p>
     </header>
     <div class="columns">
       {{> models/create/column/column}}

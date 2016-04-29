@@ -35,12 +35,17 @@ h1 {
 h2 {
   font-size: 24px;
   font-weight: 400;
+  margin-bottom: 24px;
 }
 
 h4 {
   font-size: 16px;
   font-weight: 200;
   font-style: italic;
+}
+
+p {
+  margin-bottom: 11px;
 }
 
 a {
@@ -67,6 +72,14 @@ a {
   }
 }
 
+.caption {
+  color: $oslo;
+}
+
+.emphasis {
+  font-style: italic;
+}
+
 button {
   height: 44px;
   width: 255px;
@@ -80,7 +93,7 @@ button {
   cursor: pointer;
   background-color: transparent;
 
-  transition: box-shadow 250ms;
+  transition: all 250ms;
 
   &.primary {
     background-color: $mine-shaft;
@@ -89,6 +102,10 @@ button {
 
   &:hover {
     box-shadow: 0px 2px 4px $wild-sand-shadow;
+  }
+
+  &:active {
+    color: transparent;
   }
 }
 
