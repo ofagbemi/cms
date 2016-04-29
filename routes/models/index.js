@@ -29,8 +29,13 @@ router.get('/create', (req, res, next) => {
   request.get(url, (err, response, body) => {
     if (err) { return next(err); }
 
+    let json = JSON.parse(body);
+    let models = _.values(json).sort((a, b) => {
+      return a.displayName.localeCompare(b.displayName);
+    });
+
     res.render('models/create', {
-      models: JSON.parse(body),
+      models: models,
       dataTypes: DATA_TYPES,
       dataTypeLabels: DATA_TYPE_LABELS
     });
