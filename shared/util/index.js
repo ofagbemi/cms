@@ -26,3 +26,10 @@ exports.getColumnName = (displayName) => {
   let columnName = trim(displayName).replace(/\W+/g, ' ');
   return camelcase(columnName);
 };
+
+exports.getReferenceName = (displayName) => {
+  // replace non-word characters with spaces before camelcase
+  // removes them and camelcases properly
+  let referenceName = trim(displayName).replace(/\W+/g, ' ');
+  return camelcase(referenceName);
+};

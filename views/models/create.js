@@ -32,13 +32,23 @@ ModelsCreate.prototype.init = function() {
   this.$addColumnButton.on('click', _.bind(this._handleAddColumn, this));
   this.$el.on('keyup', this.$displayName,
               _.bind(this._handleDisplayNameKeyup, this));
-  this.$el.on('click', '.references > .reference',
-              _.bind(this._handleReferenceClick, this));
+  this.$el.on('click', '.reference-tags > .reference',
+              _.bind(this._handleReferenceTagClick, this));
 };
 
-ModelsCreate.prototype._handleReferenceClick = function(e) {
-  let $reference = $(e.target);
-  $reference.toggleClass('selected');
+ModelsCreate.prototype._handleReferenceTagClick = function(e) {
+  let referenceTableName = e.target.getAttribute('name');
+  let referenceTableDisplayName = e.target.getAttribute('data-display-name');
+  let $reference = TemplateRenderer.renderTemplate(
+    'models/create/reference/reference',
+    {
+      foreignTable: {
+        name: referenceTableName,
+        displayName: referenceTableDisplayName
+      }
+    });
+
+  this.$references.append($reference);
 };
 
 ModelsCreate.prototype._handleSubmit = function(e) {
@@ -89,9 +99,9 @@ ModelsCreate.prototype.getColumns = function() {
 
 ModelsCreate.prototype.getReferences = function() {
   let references = [];
-  this.$references.find('.reference.selected').each((index, el) => {
-    let reference = el.getAttribute('name');
-    references.push(reference);
+  this.$references.find('[data-component="models_create_reference"]').each((index, el) => {
+    let reference = ComponentFactory.getComponent(el);
+    references.push(reference.getData());
   });
   return references;
 };

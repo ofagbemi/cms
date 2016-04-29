@@ -87,12 +87,12 @@ Models.prototype.create = function(params, callback) {
         // since the references are just on the schema, we
         // only need to update the in memory schemas. We don't need to reload
         // the model object
-        let schema = this.schemas[reference];
-        schema.references = schema.references || [];
-        schema.references.push(json.name);
+        let refSchema = this.schemas[reference.table];
+        refSchema.references = refSchema.references || [];
+        refSchema.references.push(this._getInverseReference(reference, json.name));
 
         // finish by writing the updated schema to the file system
-        this._writeJSON(schema)
+        this._writeJSON(refSchema)
           .then((result) => cb(null, result))
           .catch((err) => cb(err));
       };
@@ -217,8 +217,8 @@ Models.prototype._loadModels = function() {
         _.each(models, (model, modelName) => {
           let schema = this.schemas[modelName];
           _.each(schema.references, (reference) => {
-            let refSchema = this.schemas[reference];
-            let refModel = models[reference];
+            let refSchema = this.schemas[reference.table];
+            let refModel = models[reference.table];
             let joinTableName = util.getJoinTableName(modelName, refSchema.name);
             model.belongsToMany(refModel, { through: joinTableName });
           });
@@ -321,14 +321,14 @@ Models.prototype._sanitizeColumn = function(column) {
   return sanitized;
 };
 
-/**
- * @param {string} reference
- * @returns {string|null}
- */
-Models.prototype._sanitizeReference = function(reference) {
-  if (!_.isString(reference)) { return null; }
-  if (!this.models[reference]) { return null; }
-  return reference;
+Models.prototype._getInverseReference = function(reference, parentTableName) {
+  return {
+    name: reference.foreignName,
+    foreignName: reference.name,
+    displayName: reference.foreignDisplayName,
+    foreignDisplayName: reference.displayName,
+    table: parentTableName
+  };
 };
 
 /**
@@ -343,9 +343,31 @@ Models.prototype._getJSON = function(params) {
   let displayName = this._sanitizeDisplayName(params.displayName);
   let columns = _.map(params.columns, _.bind(this._sanitizeColumn, this));
 
-  let references = _.map(params.references,
-    _.bind(this._sanitizeReference, this));
-  references = _.unique(_.compact(references));
+  let referencesJSON = [];
+  _.each(params.references, (reference) => {
+    let table = reference.table;
+
+    // make sure the table being referenced actually exists
+    //
+    // TODO: might be a way of checking this without having to
+    // look at schemas member. I'm not 100% sure if this'll be guaranteed
+    // to be loaded
+    if (!this.schemas[table]) { return; }
+
+    let displayName = this._sanitizeDisplayName(reference.displayName);
+    let name = util.getReferenceName(displayName);
+
+    let foreignDisplayName = this._sanitizeDisplayName(reference.foreignDisplayName);
+    let foreignName = util.getReferenceName(foreignDisplayName);
+
+    referencesJSON.push({
+      name: name,
+      displayName: displayName,
+      foreignName: foreignName,
+      foreignDisplayName: foreignDisplayName,
+      table: table
+    });
+  });
 
   let columnsJSON = [];
   for (let column of columns) {
@@ -362,7 +384,7 @@ Models.prototype._getJSON = function(params) {
     name: tableName,
     displayName: displayName,
     columns: columnsJSON,
-    references: references
+    references: referencesJSON
   };
 };
 

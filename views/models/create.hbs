@@ -40,11 +40,19 @@
         Defining a relationship on one model automatically creates the corresponding
         reference on the other model.
       </p>
-      <p>Select each model you want this one to reference by clicking on its name.</p>
       <div class="references">
-        {{#each modelNames}}
-          <button class="tag reference" type="button" name="{{ this }}">
-            {{~ this ~}}
+
+      </div>
+
+      <p>Select each model you want this one to reference by clicking on its name.</p>
+
+      <div class="reference-tags">
+        {{#each models}}
+          <button class="tag reference"
+                  type="button"
+                  name="{{ name }}"
+                  data-display-name="{{ displayName }}">
+            {{~ displayName ~}}
           </button>
         {{/each}}
       </div>
