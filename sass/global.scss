@@ -95,6 +95,25 @@ button {
 
   transition: all 250ms;
 
+  &.tag {
+    width: auto;
+    margin: 0 8px 8px 0;
+    display: inline-block;
+    padding: 11px 14px 8px;
+    background-color: $wild-sand;
+
+    &:hover, &.selected {
+      color: white;
+      background-color: $eastern-blue;
+      box-shadow: none;
+    }
+
+    &:active {
+      color: transparent;
+      background-color: $eastern-blue;
+    }
+  }
+
   &.primary {
     background-color: $mine-shaft;
     color: white;
