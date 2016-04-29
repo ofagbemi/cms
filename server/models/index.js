@@ -69,7 +69,7 @@ class Models {
  * @param {function} callback
  */
 Models.prototype.create = function(params, callback) {
-  let json = getJSON(params);
+  let json = this._getJSON(params);
   this._writeJSON(json, (err, info) => {
     if (err) { return callback(err); }
 
@@ -118,10 +118,11 @@ Models.prototype._loadModel = function(name, callback) {
 
   let modelJSON = require('./lib/' + name + '.json');
   this._schemas[name] = modelJSON;
-  let model =  this._models[name] = this._sequelize.import(name, createImportCallback({
-    table: name,
-    modelJSON: modelJSON
-  }));
+  let model =  this._models[name] = this._sequelize.import(name,
+    this._createImportCallback({
+      table: name,
+      modelJSON: modelJSON
+    }));
   model.sync().then(() => {
     callback(null, model);
   }).catch((err) => {
@@ -174,17 +175,17 @@ Models.prototype._loadModels = function() {
  * @returns {function} a callback that can be passed to
  * Sequelize's import function
  */
-function createImportCallback(params) {
+Models.prototype._createImportCallback = function(params) {
   let table     = params.table;
   let modelJSON = params.modelJSON;
-  return function(sequelize, types) {
-    return defineModel(modelJSON, {
+  return (sequelize, types) => {
+    return this._defineModel(modelJSON, {
       sequelize: sequelize,
       types: types,
       table: table
     });
   };
-}
+};
 
 /**
  * Defines the passed in model JSON
@@ -196,13 +197,16 @@ function createImportCallback(params) {
  *
  * @returns a Sequelize model object
  */
-function defineModel(modelJSON, params) { // TODO: use destructring when available
+Models.prototype._defineModel = function(modelJSON, params) { // TODO: use destructring when available
   let table = params.table;
   let sequelize = params.sequelize;
   let types = params.types;
 
-  return sequelize.define(table, toSequelizeFormat(modelJSON, types), SEQUELIZE_DEFINE_OPTS);
-}
+  return sequelize.define(
+    table,
+    this._toSequelizeFormat(modelJSON, types),
+    SEQUELIZE_DEFINE_OPTS);
+};
 
 /**
  * Converts a JSON model to an object modified to use Sequelize
@@ -214,7 +218,7 @@ function defineModel(modelJSON, params) { // TODO: use destructring when availab
  * @returns {object} an object converted to use Sequelize
  * defined constants and validator specs
  */
-function toSequelizeFormat(modelJSON, types) {
+Models.prototype._toSequelizeFormat = function(modelJSON, types) {
   let sequelized = {};
   _.each(modelJSON.columns, (column) => {
     let dataTypeSpec = DATA_TYPES[column.type];
@@ -228,28 +232,38 @@ function toSequelizeFormat(modelJSON, types) {
     };
   });
   return sequelized;
-}
+};
 
 /**
  * @param {string} displayName
  * @returns {string}
  */
-function sanitizeDisplayName(displayName) {
+Models.prototype._sanitizeDisplayName = function(displayName) {
   return escapeHTML(trim(String(displayName)));
-}
+};
 
 /**
  * @param {object} column
  * @returns {object}
  */
-function sanitizeColumn(column) {
+Models.prototype._sanitizeColumn = function(column) {
   let sanitized = _.pick(column, ...COLUMN_PARAMS_WHITELIST);
-  sanitized.displayName = sanitizeDisplayName(sanitized.displayName);
+  sanitized.displayName = this._sanitizeDisplayName(sanitized.displayName);
   if (!DATA_TYPES[sanitized.type]) {
     sanitized.type = 'string';
   }
   return sanitized;
-}
+};
+
+/**
+ * @param {string} reference
+ * @returns {string|null}
+ */
+Models.prototype._sanitizeReference = function(reference) {
+  if (!_.isString(reference)) { return null; }
+  if (!this.models[reference]) { return null; }
+  return reference;
+};
 
 /**
  * @param {string} params.displayName
@@ -259,9 +273,12 @@ function sanitizeColumn(column) {
  * @returns {object} table schema ready to be stringified
  * and saved
  */
-function getJSON(params) {
-  let displayName = sanitizeDisplayName(params.displayName);
-  let columns = _.map(params.columns, sanitizeColumn);
+Models.prototype._getJSON = function(params) {
+  let displayName = this._sanitizeDisplayName(params.displayName);
+  let columns = _.map(params.columns, _.bind(this._sanitizeColumn, this));
+  let references = _.map(params.references,
+    _.bind(this._sanitizeReference, this));
+  references = _.compact(references);
 
   let columnsJSON = [];
   for (let column of columns) {
@@ -270,16 +287,17 @@ function getJSON(params) {
       name: name,
       displayName: column.displayName,
       type: column.type
-    }, getSchemaExtras(column)));
+    }, this._getSchemaExtras(column)));
   }
 
   let tableName = util.getTableName(displayName);
   return {
     name: tableName,
     displayName: displayName,
-    columns: columnsJSON
+    columns: columnsJSON,
+    references: references
   };
-}
+};
 
 /**
  * Dirty, I know...
@@ -290,7 +308,7 @@ function getJSON(params) {
  * need to be defined on the schema. In the example of files, adds
  * on a a root directory location that gets stored in the schema
  */
-function getSchemaExtras(column) {
+Models.prototype._getSchemaExtras = function(column) {
   let extras = {};
   if (column.type === 'file' && column.defaultDirectory) {
     _.extend(extras, {
@@ -298,6 +316,6 @@ function getSchemaExtras(column) {
     });
   }
   return extras;
-}
+};
 
 module.exports = new Models();

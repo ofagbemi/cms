@@ -128,7 +128,8 @@ router.post('/', (req, res, next) => {
   let data = req.body;
   Models.create({
     displayName: data.displayName,
-    columns: data.columns
+    columns: data.columns,
+    references: data.references
   }, (err, info) => {
     if (err) { return next(err); }
     res.json({msg: `Saved new table ${info.tableName}`});

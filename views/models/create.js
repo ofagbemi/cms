@@ -78,14 +78,29 @@ ModelsCreate.prototype._handleDisplayNameKeyup = function(e) {
   }
 };
 
+ModelsCreate.prototype.getColumns = function() {
+  let columns = [];
+  this.$columns.find('[data-component="models_create_column"]').each((index, el) => {
+    let column = ComponentFactory.getComponent(el);
+    columns.push(column.getData());
+  });
+  return columns;
+};
+
+ModelsCreate.prototype.getReferences = function() {
+  let references = [];
+  this.$references.find('.reference.selected').each((index, el) => {
+    let reference = el.getAttribute('name');
+    references.push(reference);
+  });
+  return references;
+};
+
 ModelsCreate.prototype.getData = function() {
   let data = {};
   data.displayName = this.$displayName.val();
-  data.columns = [];
-  this.$el.find('[data-component="models_create_column"]').each((index, el) => {
-    let column = ComponentFactory.getComponent(el);
-    data.columns.push(column.getData());
-  });
+  data.columns = this.getColumns();
+  data.references = this.getReferences();
   return data;
 };
 
