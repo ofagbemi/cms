@@ -19,23 +19,10 @@ const FILTER_REGEXES = [{
 /**
  * @api {get} /schemas
  *
- * Returns either a JSON hash of every defined schema or, if the `names` flag
- * is set, an array of the names of every defined schema
- *
- * @apiParam [names = false] If set, returns an array of defined model names
+ * Returns either a JSON hash of every defined schema
  */
 router.get('/schemas', (req, res) => {
-  let names = !!req.query.names;
-  if (names) {
-    let namesArr = [];
-    _.each(Models.schemas, (schema) => {
-      namesArr.push(schema.name);
-    });
-    namesArr.sort();
-    res.json(namesArr);
-  } else {
-    res.json(Models.schemas);
-  }
+  res.json(Models.schemas);
 });
 
 router.get('/schemas/:model', (req, res, nex) => {
