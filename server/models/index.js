@@ -69,44 +69,70 @@ class Models {
  * @param {function} callback
  */
 Models.prototype.create = function(params, callback) {
+  callback = callback || _.noop;
   let json = this._getJSON(params);
-  this._writeJSON(json, (err, info) => {
-    if (err) { return callback(err); }
 
-    let tableName = info.tableName;
-    this._loadModel(tableName, (err, model) => {
+  this._writeJSON(json).then((info) => {
+    // update each of the json files this new model references
+    // with references to this model
+    let references = json.references;
+    let parallelFns = _.map(references, (reference) => {
+
+      return (cb) => {
+        // since the references are just on the schema, we
+        // only need to update the in memory schemas. We don't need to reload
+        // the model object
+        let schema = this.schemas[reference];
+        schema.references = schema.references || [];
+        schema.references.push(json.name);
+
+        // finish by writing the updated schema to the file system
+        this._writeJSON(schema)
+          .then((result) => cb(null, result))
+          .catch((err) => cb(err));
+      };
+    });
+
+    async.parallel(parallelFns, (err) => {
       if (err) { return callback(err); }
 
-      callback(null, _.extend({}, info, { model: model }));
+      let tableName = info.tableName;
+      this._loadModel(tableName, (err, model) => {
+        if (err) { return callback(err); }
+
+        return callback(null, _.extend({}, info, { model: model }));
+      });
     });
+  }).catch((err) => {
+    return callback(err);
   });
 };
 
 /**
  * Writes the passed in JSON to a file
  * @param {object} json
- * @param {function} callback
  */
-Models.prototype._writeJSON = function(json, callback) {
-  callback = callback || _.noop;
-  if (!json || !json.name) {
-    return callback(new Error('No table name provided'));
-  }
+Models.prototype._writeJSON = function(json) {
+  return new Promise((resolve, reject) => {
+    if (!json || !json.name) {
+      return reject(new Error('No table name provided'));
+    }
 
-  let tableName = json.name;
-  let writePath = path.join(__dirname, 'lib/', tableName + '.json');
+    let tableName = json.name;
+    let writePath = path.join(__dirname, 'lib/', tableName + '.json');
 
-  fs.open(writePath, 'w', (err, fd) => {
+    fs.open(writePath, 'w', (err, fd) => {
 
-    if (err) { return callback(err); }
+      if (err) { return reject(err); }
 
-    const buffer = new Buffer(JSON.stringify(json, null, 2));
-    fs.write(fd, buffer, 0, buffer.length, (err, bytes, buffer) => {
-      if (err) { return callback(err); }
+      const buffer = new Buffer(JSON.stringify(json, null, 2));
+      fs.write(fd, buffer, 0, buffer.length, (err, bytes, buffer) => {
+        if (err) { return reject(err); }
 
-      callback(null, {
-        path: writePath,
-        tableName: tableName
+        resolve({
+          path: writePath,
+          tableName: tableName
+        });
       });
     });
   });
