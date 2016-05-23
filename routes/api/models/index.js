@@ -150,7 +150,7 @@ function processFilters(filters, schema) {
 
         // call the transform function or some function
         // that just returns the match
-        value = (exps.transform || ((val) => val))(match[2]);
+        value = (exps.transform || _.identity)(match[2]);
         break;
       }
     }
