@@ -43,12 +43,27 @@ router.get('/create', (req, res, next) => {
 });
 
 router.get('/:model/create', (req, res, next) => {
-  let modelName = req.params.model;
+  const modelName = req.params.model;
   getLoadSchemaParallelFn(modelName)((err, schema) => {
     if (err) { return next(err); }
-    res.render('models/row/edit', {
-      schema: schema,
-      createMode: true
+
+    // after loading the schema, we also need to load each of
+    // the schemas for the reference tables
+    const fns = _.map(schema.references, (reference) => {
+      return getLoadSchemaParallelFn(reference.foreignTable);
+    });
+
+    async.parallel(fns, (err, schemas) => {
+      if (err) return next(err);
+
+      for (let i = 0; i < schema.references.length; i++) {
+        schema.references[i].foreignSchema = schemas[i];
+      }
+
+      res.render('models/row/edit', {
+        schema: schema,
+        createMode: true
+      });
     });
   });
 });
@@ -79,8 +94,24 @@ router.get('/:model/row/:id', (req, res, next) => {
     },
     schema: getLoadSchemaParallelFn(modelName)
   }, (err, data) => {
-    if (err) { return next(err); }
-    return res.render('models/row/edit', data);
+    if (err) return next(err);
+
+    const schema = data.schema;
+
+    // after loading the schema, we also need to load each of
+    // the reference table schemas
+    const fns = _.map(schema.references, (reference) => {
+      return getLoadSchemaParallelFn(reference.foreignTable);
+    });
+
+    async.parallel(fns, (err, schemas) => {
+      if (err) return next(err);
+
+      for (let i = 0; i < schema.references.length; i++) {
+        schema.references[i].foreignSchema = schemas[i];
+      }
+      res.render('models/row/edit', data);
+    });
   });
 });
 
