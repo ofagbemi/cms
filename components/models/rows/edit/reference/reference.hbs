@@ -1,0 +1,12 @@
+<div data-component="models_rows_edit_reference"
+     data-foreign-table="{{ foreignTable }}">
+
+  <div class="results"></div>
+
+  <input type="text" placeholder="Search" class="search">
+  <button type="button">Add {{ foreignDisplayName }}</button>
+
+  <script type="application/json" class="foreign-schema">
+    {{{ json this.foreignSchema }}}
+  </script>
+</div>
