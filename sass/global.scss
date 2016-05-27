@@ -198,3 +198,11 @@ label {
 ::placeholder {
   color: $silver;
 }
+
+.row {
+  display: flex;
+  
+  .col {
+    width: 120px;
+  }
+}

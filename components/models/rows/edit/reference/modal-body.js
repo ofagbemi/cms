@@ -24,9 +24,45 @@ RowsEditReference.prototype.init = function() {
   this.$results = this.$el.find('.results-section > .results');
   this.$search = this.$el.find('input[type="text"].search');
   this.$searchBy = this.$el.find('select[name="search-by"]');
+  this.$resultsSelectAll = this.$el.find(
+    '.results-section header input[type="checkbox"]');
 
+  this.$resultsSelectAll.on(
+    'change', _.bind(this._handleSelectAllSearchResults, this));
+  this.$el.on(
+    'change', '.results .col > input[type="checkbox"]',
+    _.bind(this._handleSelectSearchResult, this));
   const debouncedHandleSearchKeup = _.debounce(this._handleSearchKeyup, 300);
   this.$search.on('keyup', _.bind(debouncedHandleSearchKeup, this));
+};
+
+RowsEditReference.prototype._handleSelectAllSearchResults = function(e) {
+  const $checkboxes = this.$results.find('.col > input[type="checkbox"]');
+  const isChecked = this.$resultsSelectAll.get(0).checked;
+  $checkboxes.prop('checked', isChecked);
+};
+
+RowsEditReference.prototype._handleSelectSearchResult = function(e) {
+  const $checkboxes = this.$results.find('.col > input[type="checkbox"]');
+  const $unchecked = $checkboxes.filter(':not(:checked)');
+
+  const selectAllCheckboxEl = this.$resultsSelectAll.get(0);
+  if ($unchecked.length === $checkboxes.length) {
+    // no checkboxes checked — set select all checkbox to checked
+    if (selectAllCheckboxEl.checked) {
+      selectAllCheckboxEl.indeterminate = false;
+      selectAllCheckboxEl.checked = false;
+    }
+  } else if ($unchecked.length === 0) {
+    // all checkboxes checked - set select all checkbox to checked
+    if (selectAllCheckboxEl.indeterminate || !selectAllCheckboxEl.checked) {
+      selectAllCheckboxEl.indeterminate = false;
+      selectAllCheckboxEl.checked = true;
+    }
+  } else {
+    // some checkboxes checked - set select all checkbox to indeterminate
+    selectAllCheckboxEl.indeterminate = true;
+  }
 };
 
 RowsEditReference.prototype._handleSearchKeyup = function(e) {
@@ -83,7 +119,8 @@ RowsEditReference.prototype.renderReferenceResults = function(response) {
   return _.map(response, (row) => {
     return TemplateRenderer.renderTemplate('models/rows/edit/reference/result', {
       schema: this.foreignSchema,
-      row: row
+      row: row,
+      withCheckbox: true
     });
   });
 };
