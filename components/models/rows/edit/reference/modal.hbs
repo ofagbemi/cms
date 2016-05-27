@@ -1,0 +1,28 @@
+<div data-component="models_rows_edit_reference_modal">
+
+
+  <div class="sidebar">
+    <h4>References</h4>
+    <ul>
+      {{#each references}}
+      <li {{#if @first}}class="selected"{{/if}}>{{ foreignSchema.displayName }}</li>
+      {{/each}}
+    </ul>
+  </div>
+
+  {{#each references}}
+    {{> models/rows/edit/reference/modal-body}}
+    <!-- <header>
+      <label>
+        <p>Search “{{ foreignSchema.displayName }}”</p>
+        <input type="text"
+               class="search"
+               data-icon="search"
+               placeholder="Start typing to search for rows to reference">
+    </header>
+    <div>
+
+    </div> -->
+  </section>
+  {{/each}}
+</div>

@@ -28,7 +28,14 @@ ComponentFactory.registerComponent('models_create_column_extras_string', require
 TemplateRenderer.registerTemplate('models/create/column/extras/string', require('../components/models/create/column/extras/string.hbs'));
 
 ComponentFactory.registerComponent('models_rows_edit_column', require('../components/models/rows/edit/column/column'));
-ComponentFactory.registerComponent('models_rows_edit_reference', require('../components/models/rows/edit/reference/reference'));
+
+// ComponentFactory.registerComponent('models_rows_edit_reference_modal', require('../components/models/rows/edit/reference/modal'));
+TemplateRenderer.registerTemplate('models/rows/edit/reference/modal', require('../components/models/rows/edit/reference/modal.hbs'));
+
+TemplateRenderer.registerTemplate('models/rows/edit/reference/modal-body', require('../components/models/rows/edit/reference/modal-body.hbs'));
+ComponentFactory.registerComponent('models_rows_edit_reference_modal-body', require('../components/models/rows/edit/reference/modal-body'));
+
+TemplateRenderer.registerTemplate('models/rows/edit/reference/result', require('../components/models/rows/edit/reference/result.hbs'));
 
 // views
 const ModelsCreateView = require('../views/models/create');

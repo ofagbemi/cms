@@ -12,6 +12,7 @@ class Modal {
 
     this.$el.on('click', _.bind(this._handleClick, this));
     $('body').append(this.$el);
+    $(document).on('keyup', _.bind(this._handleKeyup, this));
   }
 
   get visible() {
@@ -47,12 +48,18 @@ class Modal {
 
   _handleClick(e) {
     // click outside of the modal popup
-    if (!$.contains(this.$content, e.target)) {
+    const clickedOutside = this.$content.get(0) !== e.target &&
+      !$.contains(this.$content.get(0), e.target);
+    if (clickedOutside) {
+      this.hide();
+    }
+  }
+
+  _handleKeyup(e) {
+    if (e.keyCode === 27) {
       this.hide();
     }
   }
 }
-
-
 
 module.exports = window.Modal = new Modal();

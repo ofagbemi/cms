@@ -1,0 +1,13 @@
+<div data-component="models_rows_edit_reference_result">
+  <div class="row">
+    {{#each schema.columns}}
+    <div class="col">
+      {{ lookup ../row name}}
+    </div>
+    {{/each}}
+  </div>
+
+  <script type="application/json">
+    {{{ json this }}}
+  </script>
+</div>

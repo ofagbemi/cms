@@ -1,0 +1,35 @@
+[data-component="models_rows_edit_reference_modal"] {
+
+  display: flex;
+  height: 100%;
+
+  > .sidebar {
+    padding-top: 40px;
+    width: 180px;
+    height: 600px;
+    height: 100%;
+    border-right: solid 1px $wild-sand;
+    flex: 0 0 auto;
+
+    h4 {
+      padding-left: 40px;
+    }
+
+    > ul {
+      > li {
+        margin: 7px 0;
+        padding: 7px 0 7px 40px;
+        cursor: pointer;
+
+        &:hover {
+          color: $eastern-blue;
+        }
+        &.selected {
+          color: $eastern-blue;
+          font-weight: 400;
+          border-left: solid 5px;
+        }
+      }
+    }
+  }
+}

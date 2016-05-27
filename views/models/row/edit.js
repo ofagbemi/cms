@@ -4,8 +4,10 @@ import async from 'async';
 import _ from 'underscore';
 import $ from 'jquery';
 
+import Modal from '../../../components/modal/modal';
 import Loading from '../../../components/loading/loading';
 import ComponentFactory from '../../../client/services/component-factory';
+import TemplateRenderer from '../../../client/services/template-renderer';
 
 class ModelsRowEdit {
   constructor($el) {
@@ -28,12 +30,19 @@ ModelsRowEdit.prototype.init = function() {
   if (this._init) { return; }
   this._init = true;
 
-  try {
-    this.data = JSON.parse(this.$el.find('script.model-data').remove().html());
-  } catch (e) {
-    this.data = {};
-  }
+  this.data = {};
 
+  try {
+    this.data.schema = JSON.parse(this.$el.find('script.schema').remove().html());
+  } catch (e) { /* */ }
+
+  try {
+    this.data.row = JSON.parse(this.$el.find('script.row').remove().html());
+  } catch(e) { /* */ }
+
+  this.$editReferencesButton = this.$el.find('button.edit-references');
+
+  this.$editReferencesButton.on('click', _.bind(this._handleReferences, this));
   this.$form = this.$el.find('form#edit-form');
   this.$form.on('submit', _.bind(this._handleSubmit, this));
 };
@@ -98,6 +107,13 @@ ModelsRowEdit.prototype.getData = function() {
     }
   });
   return data;
+};
+
+ModelsRowEdit.prototype._handleReferences = function() {
+  const $modalContent = TemplateRenderer.renderTemplate('models/rows/edit/reference/modal', {
+    references: this.data.schema.references
+  });
+  Modal.show($modalContent);
 };
 
 module.exports = new ModelsRowEdit($('#models_row_edit'));
