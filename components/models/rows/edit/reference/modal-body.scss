@@ -7,4 +7,25 @@
   &.selected {
     display: block;
   }
+
+  > section {
+
+    &.results-section {
+      > header.results-header {
+        display: flex;
+        align-items: center;
+        > button.add-references {
+          margin-left: auto;
+          transition: transform 200ms $out-back-bezier, opacity 200ms;
+
+          &:not(.show) {
+            transition: transform 200ms $in-back-bezier, opacity 200ms;
+            pointer-events: none;
+            transform: translate(0, 20px);
+            opacity: 0;
+          }
+        }
+      }
+    }
+  }
 }

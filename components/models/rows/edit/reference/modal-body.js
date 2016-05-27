@@ -25,7 +25,8 @@ RowsEditReference.prototype.init = function() {
   this.$search = this.$el.find('input[type="text"].search');
   this.$searchBy = this.$el.find('select[name="search-by"]');
   this.$resultsSelectAll = this.$el.find(
-    '.results-section header input[type="checkbox"]');
+    '.results-section header input[type="checkbox"].select-all');
+  this.$addReferencesButton = this.$el.find('button.add-references');
 
   this.$resultsSelectAll.on(
     'change', _.bind(this._handleSelectAllSearchResults, this));
@@ -40,6 +41,14 @@ RowsEditReference.prototype._handleSelectAllSearchResults = function(e) {
   const $checkboxes = this.$results.find('.col > input[type="checkbox"]');
   const isChecked = this.$resultsSelectAll.get(0).checked;
   $checkboxes.prop('checked', isChecked);
+
+  // only show the results buttons if at least one of the
+  // checkboxes is checked (in this case, all of them are)
+  if (isChecked) {
+    this._showAddReferencesButton();
+  } else {
+    this._hideAddReferencesButton();
+  }
 };
 
 RowsEditReference.prototype._handleSelectSearchResult = function(e) {
@@ -63,6 +72,22 @@ RowsEditReference.prototype._handleSelectSearchResult = function(e) {
     // some checkboxes checked - set select all checkbox to indeterminate
     selectAllCheckboxEl.indeterminate = true;
   }
+
+  // only show the buttons if at least some of the checkboxes
+  // are checked. Hide otherwise
+  if (selectAllCheckboxEl.checked || selectAllCheckboxEl.indeterminate) {
+    this._showAddReferencesButton();
+  } else {
+    this._hideAddReferencesButton();
+  }
+};
+
+RowsEditReference.prototype._showAddReferencesButton = function() {
+  this.$addReferencesButton.addClass('show');
+};
+
+RowsEditReference.prototype._hideAddReferencesButton = function() {
+  this.$addReferencesButton.removeClass('show');
 };
 
 RowsEditReference.prototype._handleSearchKeyup = function(e) {
@@ -124,7 +149,5 @@ RowsEditReference.prototype.renderReferenceResults = function(response) {
     });
   });
 };
-
-
 
 module.exports = RowsEditReference;
