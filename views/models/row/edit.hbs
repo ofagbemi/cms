@@ -8,20 +8,38 @@
     Editing
     {{~/if}} {{ schema.displayName }}</h2>
 
-  <form id="edit-form" method="POST" action="/models/{{ schema.name}}">
-    {{#each schema.columns}}
+  <form id="edit-form"
+        method="{{~#if createMode}}POST{{else}}PUT{{/if~}}"
+        action="/models/{{ schema.name }}">
+
+    <h3>Columns</h3>
     <div class="columns">
+    {{#each schema.columns}}
       {{> models/rows/edit/column/column this row=../row}}
-    </div>
     {{/each}}
+    </div>
+
+    <h3>References</h3>
+    <div class="references">
+      <button class="edit-references" type="button">Edit References</button>
+    </div>
+
     <footer>
       <button type="button" class="cancel">Cancel</button>
+
+      {{#if createMode}}
       <button type="submit" class="create primary">Create</button>
+      {{ else }}
       <button type="submit" class="save primary">Save</button>
+      {{/if}}
     </footer>
   </form>
 
-  <script class="model-data" type="application/json">
-    {{{json this}}}
+  {{!-- JSON wrappers --}}
+  <script class="schema" type="application/json">
+    {{{ json schema }}}
+  </script>
+  <script class="row" type="application/json">
+    {{{ json row }}}
   </script>
 </div>

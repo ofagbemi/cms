@@ -87,7 +87,7 @@ Models.prototype.create = function(params, callback) {
         // since the references are just on the schema, we
         // only need to update the in memory schemas. We don't need to reload
         // the model object
-        let refSchema = this.schemas[reference.table];
+        let refSchema = this.schemas[reference.foreignTable];
         refSchema.references = refSchema.references || [];
         refSchema.references.push(this._getInverseReference(reference, json.name));
 
@@ -217,8 +217,8 @@ Models.prototype._loadModels = function() {
         _.each(models, (model, modelName) => {
           let schema = this.schemas[modelName];
           _.each(schema.references, (reference) => {
-            let refSchema = this.schemas[reference.table];
-            let refModel = models[reference.table];
+            let refSchema = this.schemas[reference.foreignTable];
+            let refModel = models[reference.foreignTable];
             let joinTableName = util.getJoinTableName(modelName, refSchema.name);
             model.belongsToMany(refModel, { through: joinTableName });
           });
@@ -327,7 +327,7 @@ Models.prototype._getInverseReference = function(reference, parentTableName) {
     foreignName: reference.name,
     displayName: reference.foreignDisplayName,
     foreignDisplayName: reference.displayName,
-    table: parentTableName
+    foreignTable: parentTableName
   };
 };
 
@@ -365,7 +365,7 @@ Models.prototype._getJSON = function(params) {
       displayName: displayName,
       foreignName: foreignName,
       foreignDisplayName: foreignDisplayName,
-      table: table
+      foreignTable: table
     });
   });
 

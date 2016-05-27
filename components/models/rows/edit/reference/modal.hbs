@@ -1,0 +1,17 @@
+<div data-component="models_rows_edit_reference_modal">
+
+
+  <div class="sidebar">
+    <h4>References</h4>
+    <ul>
+      {{#each references}}
+      <li {{#if @first}}class="selected"{{/if}}>{{ foreignSchema.displayName }}</li>
+      {{/each}}
+    </ul>
+  </div>
+
+  {{#each references}}
+    {{> models/rows/edit/reference/modal-body}}
+  </section>
+  {{/each}}
+</div>

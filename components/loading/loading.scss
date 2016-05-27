@@ -55,7 +55,7 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      z-index: $max-z-index;
+      z-index: $loading-z-index;
 
       > svg {
         margin-top: -50%;

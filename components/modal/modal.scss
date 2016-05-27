@@ -1,0 +1,42 @@
+#modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $cod-grey-shadow;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $modal-z-index;
+
+  opacity: 0;
+  pointer-events: none;
+
+  > .modal-content {
+    background-color: white;
+    width: 80%;
+    max-width: 768px;
+    height: 600px;
+    max-height: 100%;
+
+    transform: translate(0, 100%);
+    opacity: 0;
+
+    transition: transform 0.4s $out-back-bezier, opacity 0.4s ease-in;
+  }
+
+  &.transition-show, &.transition-hide, &.show {
+    opacity: 1;
+  }
+
+  &.show {
+    pointer-events: auto;
+    opacity: 1;
+
+    > .modal-content {
+      transform: none;
+      opacity: 1;
+    }
+  }
+}

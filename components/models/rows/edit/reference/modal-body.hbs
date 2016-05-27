@@ -1,0 +1,51 @@
+<div data-component="models_rows_edit_reference_modal-body"
+     data-foreign-table="{{ foreignTable }}">
+
+  <header>
+    <label>
+      <p>Search “{{ foreignSchema.displayName }}”</p>
+    <input type="text"
+      class="search"
+      data-icon="search"
+      placeholder="Start typing to search rows to reference">
+    </label>
+    <label>
+      <p>Search by</p>
+      <select name="search-by">
+        {{#each foreignSchema.columns}}
+        <option value="{{ name }}">{{ displayName }}</option>
+        {{/each}}
+      </select>
+  </header>
+
+  <section class="references">
+
+  </section>
+
+  <section class="results-section">
+    <header class="results-header">
+      <h2>Results</h2>
+      <button class="add-references">
+        <span>Add references</span>
+      </button>
+    </header>
+
+    <header class="row">
+      <div class="col">
+        <input class="select-all" type="checkbox">
+      </div>
+      {{#each foreignSchema.columns}}
+        <div class="col">
+          <span>{{ displayName }}</span>
+        </div>
+      {{/each}}
+    </header>
+    <div class="results">
+
+    </div>
+  </section>
+
+  <script type="application/json" class="foreign-schema">
+    {{{ json foreignSchema }}}
+  </script>
+</div>

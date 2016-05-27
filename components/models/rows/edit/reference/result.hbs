@@ -1,0 +1,18 @@
+<div data-component="models_rows_edit_reference_result" {{#if withCheckbox}} class="with-checkbox"{{/if}}>
+  <label class="row">
+    {{#if withCheckbox}}
+    <div class="col">
+      <input type="checkbox">
+    </div>
+    {{/if}}
+    {{#each schema.columns}}
+    <div class="col">
+      {{ lookup ../row name}}
+    </div>
+    {{/each}}
+  </label>
+
+  <script type="application/json">
+    {{{ json this }}}
+  </script>
+</div>
