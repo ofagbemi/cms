@@ -2,18 +2,20 @@
 @import 'reset';
 @import 'global';
 
+@import '../components/model/create';
+
 // components
-@import '../components/loading/loading';
-@import '../components/models/create/column/column';
-@import '../components/models/create/reference/reference';
-@import '../components/models/create/column/extras/file';
-@import '../components/models/rows/edit/column/column';
-@import '../components/models/rows/edit/reference/modal';
-@import '../components/models/rows/edit/reference/modal-body';
-@import '../components/models/rows/row/row';
-@import '../components/modal/modal';
+// @import '../components/loading/loading';
+// @import '../components/models/create/column/column';
+// @import '../components/models/create/reference/reference';
+// @import '../components/models/create/column/extras/file';
+// @import '../components/models/rows/edit/column/column';
+// @import '../components/models/rows/edit/reference/modal';
+// @import '../components/models/rows/edit/reference/modal-body';
+// @import '../components/models/rows/row/row';
+// @import '../components/modal/modal';
 
 // views
-@import '../views/models/create';
-@import '../views/models/rows';
-@import '../views/models/row/edit';
+// @import '../views/models/create';
+// @import '../views/models/rows';
+// @import '../views/models/row/edit';

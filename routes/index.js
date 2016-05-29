@@ -3,6 +3,6 @@
 const router = require('express').Router();
 
 router.use('/api', require('./api'));
-router.use('/models', require('./models'));
+router.use('/', require('./app'));
 
 module.exports = router;

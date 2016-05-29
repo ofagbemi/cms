@@ -1,0 +1,16 @@
+<div id="react-app">
+
+  {{#each initialState.models}}
+    <div class="row">
+      <a class="name" href="/{{ name }}">{{ name }}</a>
+    </div>
+  {{/each}}
+
+  <footer>
+    <a class="button create" href="/create">Create</a>
+  </footer>
+
+  <script id="initial-state" type="application/json">
+    {{{ json initialState }}}
+  </script>
+</div>

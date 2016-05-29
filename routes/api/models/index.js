@@ -111,8 +111,20 @@ router.put('/:model/row/:id', validateModel, (req, res, next) => {
 
 });
 
+/**
+ * @api {post} /api/models
+ * Creates a new model
+ *
+ * @apiParam {string} displayName
+ * @apiParam {{ displayName:string, type:string }[]} columns
+ * @apiParam {{
+ *   table:string,
+ *   displayName:string,
+ *   foreignDisplayName:string }[]} references
+ */
 router.post('/', (req, res, next) => {
   let data = req.body;
+
   Models.create({
     displayName: data.displayName,
     columns: data.columns,

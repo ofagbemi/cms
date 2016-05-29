@@ -1,0 +1,63 @@
+#create_model {
+  > form {
+    margin-top: 48px;
+
+    header {
+      margin-bottom: 48px;
+
+      > .caption {
+        margin-top: 13px;
+        transition: all 250ms;
+
+        &.hide {
+          opacity: 0;
+        }
+      }
+    }
+
+    .columns-wrapper {
+      > footer {
+        margin-top: 40px;
+      }
+    }
+
+    .columns > .column {
+      margin-bottom: 48px;
+
+      > .initial {
+        display: flex;
+
+        > label {
+          flex: 1 0 auto;
+          max-width: 50%;
+
+          &:first-child {
+            margin-right: 24px;
+          }
+
+          > .caption {
+            margin-top: 13px;
+            transition: all 250ms;
+
+            &.hide {
+              opacity: 0;
+            }
+          }
+        }
+      }
+    }
+
+    .references-wrapper {
+      margin-top: 48px;
+    }
+
+    > footer {
+      display: flex;
+      margin-top: 40px;
+
+      > button.finish {
+        margin-left: auto;
+      }
+    }
+  }
+}

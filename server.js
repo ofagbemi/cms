@@ -1,6 +1,10 @@
 'use strict';
 
 require('dotenv').config();
+require('babel-core/register')({
+    presets: ['es2015', 'react']
+});
+require('isomorphic-fetch');
 
 const express = require('express');
 const exphbs  = require('express-handlebars');
