@@ -88,16 +88,16 @@ module.exports = function(params) {
             Defining a relationship on one model automatically creates the
             corresponding reference on the other model.
           </p>
-        </div>
-
-        <div className="references">
-          { renderReferenceDetails({
-              references,
-              models,
-              onReferenceTableDisplayNameChange,
-              onReferenceForeignTableDisplayNameChange
-            })
-          }
+          
+          <div className="references">
+            { renderReferenceDetails({
+                references,
+                models,
+                onReferenceTableDisplayNameChange,
+                onReferenceForeignTableDisplayNameChange
+              })
+            }
+          </div>
         </div>
         <p>
           Select each model you want this one to reference by clicking on
@@ -156,7 +156,7 @@ function renderReferenceDetails(params) {
     // get the model for the table being referenced
     const model = _.findWhere(models, { name: reference.table });
     return(
-      <div key={ index }>
+      <div key={ index } className="reference">
         <h4>
           Creating reference to <span className="emphasis">{ model.displayName }</span>
         </h4>
