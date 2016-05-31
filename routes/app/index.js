@@ -1,24 +1,28 @@
 'use strict';
 
-const _              = require('underscore');
-const React          = require('react');
-const ReactDOMServer = require('react-dom/server');
-const ReactRouter    = require('react-router');
-const RouterContext  = require('react-router').RouterContext;
-const router         = require('express').Router();
-const request        = require('request');
-const createStore    = require('redux').createStore;
-const Provider       = require('react-redux').Provider;
+const _               = require('underscore');
+const async           = require('async');
+const React           = require('react');
+const ReactDOMServer  = require('react-dom/server');
+const ReactRouter     = require('react-router');
+const RouterContext   = require('react-router').RouterContext;
+const router          = require('express').Router();
+const request         = require('request');
+const createStore     = require('redux').createStore;
+const combineReducers = require('redux').combineReducers;
+const Provider        = require('react-redux').Provider;
 
-const reactRoutes = require('./react-routes');
+const reactRoutes  = require('./react-routes');
 const AppComponent = require('../../components/app.jsx');
 const CreateModelComponent = require('../../components/model/create.jsx').component;
-const CreateModelComponentReducer = require('../../components/model/create.jsx').reducer;
+const componentsReducer    = require('../../components/reducer');
 
 const API_URL = process.env.ROOT_URL + '/api';
 
 // const DATA_TYPES = require('../../server/models/data-types.json');
 // const DATA_TYPE_LABELS = _.keys(DATA_TYPES).sort();
+
+module.exports = router;
 
 router.get('/', (req, res, next) => {
   let url = `${API_URL}/models/schemas`;
@@ -43,11 +47,18 @@ router.get('/create', (req, res, next) => {
     });
 
     const state = {
-      createMode: true,
-      models
+      components: {
+        createModelComponent: {
+          createMode: true,
+          models // TODO: <-- pull this out of the initial state for the component
+                 // and figure out how to get it from the models state object
+        }
+      }
     };
 
-    const store = createStore(CreateModelComponentReducer, state);
+    const store = createStore(combineReducers({
+      components: componentsReducer
+    }), state);
     const initialState = store.getState();
 
     ReactRouter.match({
@@ -64,7 +75,56 @@ router.get('/create', (req, res, next) => {
   });
 });
 
-module.exports = router;
+router.get('/:model/create', (req, res, next) => {
+  const modelName = req.params.model;
+  getLoadSchemaParallelFn(modelName)((err, parentModel) => {
+    if (err) return next(err);
+
+    const fns = _.map(parentModel.references, (reference) => {
+      return getLoadSchemaParallelFn(reference.foreignTable);
+    });
+
+    async.parallel(fns, (err, model) => {
+      if (err) return next(err);
+
+      for (let i = 0; i < parentModel.references.length; i++) {
+        // attach the loaded model to the reference
+        // object
+        parentModel.references[i].foreignModel = model[i];
+      }
+
+      const state = {
+        components: {
+          createRowComponent: {
+            createMode: true
+          }
+        }
+      };
+
+      const store = createStore(combineReducers({
+        components: componentsReducer
+      }), state);
+      const initialState = store.getState();
+      ReactRouter.match({
+        location: req.url,
+        routes: reactRoutes
+      }, (err, redirectLocation, props) => {
+        const markup = ReactDOMServer.renderToString(
+          <Provider store={ store }>
+            <RouterContext {...props} />
+          </Provider>
+        );
+        return res.render('app/row/create', { initialState, markup })
+      });
+
+
+      // return res.render('app/row/create', {
+      //   model: parentModel,
+      //   createMode: true
+      // });
+    });
+  });
+});
 
 // =====================================
 // const _       = require('underscore');
@@ -105,32 +165,6 @@ module.exports = router;
 //       models: models,
 //       dataTypes: DATA_TYPES,
 //       dataTypeLabels: DATA_TYPE_LABELS
-//     });
-//   });
-// });
-//
-// router.get('/:model/create', (req, res, next) => {
-//   const modelName = req.params.model;
-//   getLoadSchemaParallelFn(modelName)((err, schema) => {
-//     if (err) { return next(err); }
-//
-//     // after loading the schema, we also need to load each of
-//     // the schemas for the reference tables
-//     const fns = _.map(schema.references, (reference) => {
-//       return getLoadSchemaParallelFn(reference.foreignTable);
-//     });
-//
-//     async.parallel(fns, (err, schemas) => {
-//       if (err) return next(err);
-//
-//       for (let i = 0; i < schema.references.length; i++) {
-//         schema.references[i].foreignSchema = schemas[i];
-//       }
-//
-//       res.render('models/row/edit', {
-//         schema: schema,
-//         createMode: true
-//       });
 //     });
 //   });
 // });
@@ -232,17 +266,15 @@ router.post('/models', (req, res, next) => {
     });
   });
 });
-//
-// function getLoadSchemaParallelFn(schema) {
-//   return (callback) => {
-//     let url = `${API_URL}/models/schemas/${schema}`;
-//     request.get(url, (err, response, body) => {
-//       if (err) { return callback(err); }
-//
-//       let schema = JSON.parse(body);
-//       return callback(null, schema);
-//     });
-//   };
-// }
-//
-// module.exports = router;
+
+function getLoadSchemaParallelFn(schema) {
+  return (callback) => {
+    let url = `${API_URL}/models/schemas/${schema}`;
+    request.get(url, (err, response, body) => {
+      if (err) { return callback(err); }
+
+      let schema = JSON.parse(body);
+      return callback(null, schema);
+    });
+  };
+}

@@ -6,9 +6,10 @@ const IndexRoute = require('react-router').IndexRoute;
 
 const AppComponent = require('../../components/app.jsx');
 const CreateModelComponent = require('../../components/model/create.jsx').component;
-
+const CreateRowComponent   = require('../../components/row/create.jsx').component;
 module.exports = [
   <Route name="app" component={ AppComponent } path="/create">
-    <IndexRoute component={CreateModelComponent} />
+    <IndexRoute component={ CreateModelComponent } />
+    <Route component={ CreateRowComponent } path="/:model/create" />
   </Route>
 ];

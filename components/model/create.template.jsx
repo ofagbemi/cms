@@ -26,8 +26,7 @@ module.exports = function(params) {
   return (
     <div id="create_model">
       <h2>{ createMode ? 'Create new' : 'Edit' } model</h2>
-      <form id="create-form" method="POST" action="/models"
-            onSubmit={ onSubmit }>
+      <form onSubmit={ onSubmit }>
         <header>
           <p className="caption">
             Your model's name should be a singular noun, like ‘person’, ‘paper’
@@ -88,9 +87,10 @@ module.exports = function(params) {
             Defining a relationship on one model automatically creates the
             corresponding reference on the other model.
           </p>
-          
+
           <div className="references">
-            { renderReferenceDetails({
+            {
+              renderReferenceDetails({
                 references,
                 models,
                 onReferenceTableDisplayNameChange,

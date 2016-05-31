@@ -10,25 +10,42 @@ const Router         = ReactRouter.Router;
 const browserHistory = ReactRouter.browserHistory;
 const Provider        = require('react-redux').Provider;
 const createStore     = require('redux').createStore;
+const combineReducers = require('redux').combineReducers;
 const applyMiddleware = require('redux').applyMiddleware;
 const thunkMiddleware = require('redux-thunk').default;
 
 const reactRoutes  = require('../routes/app/react-routes.jsx');
 const initialState = require('./services/initial-state');
 const AppComponent = require('../components/app.jsx');
-const CreateModelComponent = require('../components/model/create.jsx').create;
-const CreateModelComponentReducer = require('../components/model/create.jsx').reducer;
+
+const componentsReducer  = require('../components/reducer');
+
+const rootReducer = combineReducers({
+  components: componentsReducer
+});
 
 if (!initialState.noReact) {
 
-  const createModelComponentStore = createStore(
-    CreateModelComponentReducer,
+  const store = createStore(
+    rootReducer,
     initialState,
     applyMiddleware(thunkMiddleware)
   );
 
+  // const createModelComponentStore = createStore(
+  //   CreateModelComponentReducer,
+  //   initialState,
+  //   applyMiddleware(thunkMiddleware)
+  // );
+
+  // const createRowComponentStore = createStore(
+  //   CreateRowComponentReducer,
+  //   initialState,
+  //   applyMiddleware(thunkMiddleware)
+  // );
+
   ReactDOM.render(
-    <Provider store={createModelComponentStore}>
+    <Provider store={ store }>
       <Router history={ browserHistory } routes={ reactRoutes } />
     </Provider>,
     document.getElementById('content')

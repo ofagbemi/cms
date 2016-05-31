@@ -1,3 +1,9 @@
+const _        = require('underscore');
+const React    = require('react');
+const update   = require('react-addons-update');
+const util     = require('../../shared/util');
+const POST_URL = '/models';
+
 module.exports = {
   // columns
   addColumn() {
@@ -48,21 +54,54 @@ module.exports = {
       foreignDisplayName
     };
   },
-  submit() {
+  createModel() {
     return {
       type: 'SUBMIT'
     };
   },
-  submitSuccess(response) {
+  createModelSuccess(response) {
     return {
       type: 'SUBMIT_SUCCESS',
       response
     };
   },
-  submitError(error) {
+  createModelError(error) {
     return {
       type: 'SUBMIT_ERROR',
       error
+    };
+  },
+  createModelThunk() {
+
+    return (dispatch, getState) => {
+
+      const state = getState().components.createModelComponent;
+      const { tableDisplayName: displayName, references } = state;
+      const columns = state.columns.map((column) => {
+        return _.pick(column, 'type', 'displayName');
+      });
+
+      const data = {
+        displayName,
+        columns,
+        references
+      };
+
+      dispatch(this.createModel());
+
+      return util.fetchJSON(POST_URL, {
+        method: 'POST',
+        credentials: 'same-origin',
+        data: data
+      })
+      .then(response => response.json())
+      .then((json) => {
+        console.log('posted successfully', json);
+        dispatch(this.createModelSuccess(json));
+      }).catch((err) => {
+        console.log('there was an error', err);
+        dispatch(this.createModelError(err));
+      });
     };
   }
 };

@@ -1,62 +1,12 @@
-const _     = require('underscore');
-const React = require('react');
-const connect = require('react-redux').connect;
-const update  = require('react-addons-update');
-
-const util  = require('../../shared/util');
+const connect  = require('react-redux').connect;
+const Actions  = require('./actions');
 const template = require('./create.template.jsx');
-
-const POST_URL = '/models';
-
-const Actions = require('./actions');
-
-function handleSubmitThunk() {
-
-  return (dispatch, getState) => {
-
-    const state = getState();
-    const { tableDisplayName: displayName, references } = state;
-    const columns = state.columns.map((column) => {
-      return _.pick(column, 'type', 'displayName');
-    });
-
-    const data = {
-      displayName,
-      columns,
-      references
-    };
-
-    dispatch(Actions.submit());
-
-    return util.fetchJSON(POST_URL, {
-      method: 'POST',
-      credentials: 'same-origin',
-      data: data
-    })
-    .then(response => response.json())
-    .then((json) => {
-      console.log('posted successfully', json);
-      dispatch(Actions.submitSuccess(json));
-    }).catch((err) => {
-      console.log('there was an error', err);
-      dispatch(Actions.submitError(err));
-    });
-  };
-}
 
 exports.component = connect(mapStateToProps, mapDispatchToProps)(template);
 exports.reducer   = require('./reducer');
 
 function mapStateToProps(state) {
-  return {
-    createMode: state.createMode,
-    dataTypeLabels: state.dataTypeLabels,
-    tableDisplayName: state.tableDisplayName,
-    tableName: state.tableName,
-    columns: state.columns,
-    models: state.models,
-    references: state.references
-  }
+  return state.components.createModelComponent;
 };
 
 function mapDispatchToProps(dispatch, ownProps) {
@@ -87,7 +37,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     onSubmit(e) {
       e.preventDefault();
-      return dispatch(handleSubmitThunk());
+      return dispatch(Actions.createModelThunk());
     }
   };
 };
