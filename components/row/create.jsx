@@ -11,6 +11,21 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    onShowEditReferences() {
+      return dispatch(Actions.showEditReferences());
+    },
+    onHideEditReferences() {
+      return dispatch(Actions.hideEditReferences());
+    },
+    onChangeReferenceSearchBy({ value, index }) {
+      return dispatch(Actions.changeReferenceSearchBy({ value, index }))
+    },
+    onSearchReferenceRows({ query, foreignModel, columnName, index }) {
+      return dispatch(Actions.searchReferenceRows({ query, foreignModel, columnName, index }));
+    },
+    onAddReferenceRow({ foreignName, row }) {
+      return dispatch(Actions.addReferenceRow({ foreignName, row }));
+    },
     onColumnValueChange({ columnValue, index }) {
       return dispatch(Actions.changeColumnValue({ columnValue, index }))
     },

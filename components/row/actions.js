@@ -1,5 +1,6 @@
 const _    = require('underscore');
 const util = require('../../shared/util');
+const querystring = require('querystring');
 
 module.exports = {
   changeColumnValue({ columnValue, index }) {
@@ -143,5 +144,86 @@ module.exports = {
         dispatch(this.uploadRowFilesError(err));
       });
     };
+  },
+
+  showEditReferences() {
+    return {
+      type: 'SHOW_EDIT_REFERENCES'
+    };
+  },
+
+  hideEditReferences() {
+    return {
+      type: 'HIDE_EDIT_REFERENCES'
+    };
+  },
+
+  changeReferenceSearchBy({ value, index }) {
+    return {
+      type: 'CHANGE_REFERENCE_SEARCH_BY',
+      value,
+      index
+    }
+  },
+
+  // TODO: figure out how to debounce this on a per
+  // reference basis
+  searchReferenceRows({ foreignModel, columnName, query, index }) {
+    return (dispatch, getState) => {
+
+      const state = getState().components.createRowComponent;
+
+      // add filter query parameters to the url using the
+      // '=@' like operator
+      // TODO: add support for searching multiple columns at once / or
+      // implement elastic search
+      const filter = [];
+      filter.push(`${columnName}=@${query}`);
+
+      const q = querystring.stringify({ filter });
+      const url = `/api/models/${ foreignModel.name }?${ q }`;
+
+      fetch(url, {
+        type: 'GET',
+        credentials: 'same-origin'
+      })
+      .then(response => response.json())
+      .then(searchResults => {
+        return dispatch(this.searchReferenceRowsSuccess({ searchResults, index }));
+      })
+      .catch(err => {
+        return dispatch(this.searchReferenceRowsError({ err, index }));
+      });
+    };
+  },
+
+  searchReferenceRowsBegin() {
+    return {
+      type: 'SEARCH_REFERENCE_ROWS_BEGIN'
+    };
+  },
+
+  searchReferenceRowsSuccess({ searchResults, index }) {
+    return {
+      type: 'SEARCH_REFERENCE_ROWS_SUCCESS',
+      searchResults,
+      index
+    };
+  },
+
+  searchReferenceRowsError({ err, index }) {
+    return {
+      type: 'SEARCH_REFERENCE_ROWS_ERROR',
+      err,
+      index
+    };
+  },
+
+  addReferenceRow({ foreignName, row }) {
+    return {
+      type: 'ADD_REFERENCE_ROW',
+      foreignName,
+      row
+    }
   }
 };

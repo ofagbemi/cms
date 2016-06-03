@@ -88,7 +88,7 @@ module.exports = {
 
       dispatch(this.createModel());
 
-      const url = '/models';
+      const url = '/';
       return util.fetchJSON(url, {
         method: 'POST',
         credentials: 'same-origin',

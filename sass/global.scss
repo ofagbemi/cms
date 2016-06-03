@@ -81,55 +81,6 @@ a {
   font-style: italic;
 }
 
-button, a.button {
-  height: 44px;
-  width: 255px;
-  display: inline-block;
-  padding: 11px 24px;
-  text-align: center;
-  border: none;
-  border-radius: 3px;
-  font-family: 'FranklinGothic URW', sans-serif;
-  font-size: 16px;
-  appearance: none;
-  cursor: pointer;
-  background-color: transparent;
-
-  transition: all 250ms;
-
-  &.tag {
-    width: auto;
-    margin: 0 8px 8px 0;
-    display: inline-block;
-    padding: 11px 14px 8px;
-    background-color: $wild-sand;
-
-    &:hover, &.selected {
-      color: white;
-      background-color: $eastern-blue;
-      box-shadow: none;
-    }
-
-    &:active {
-      color: transparent;
-      background-color: $eastern-blue;
-    }
-  }
-
-  &.primary {
-    background-color: $mine-shaft;
-    color: white;
-  }
-
-  &:hover {
-    box-shadow: 0px 2px 4px $wild-sand-shadow;
-  }
-
-  &:active {
-    color: transparent;
-  }
-}
-
 input[type="text"].large {
   width: 100%;
   padding: 24px 0 16px;

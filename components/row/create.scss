@@ -1,5 +1,4 @@
 #create_row {
-
   h2 {
     margin-top: 84px;
   }
@@ -7,7 +6,7 @@
   > form {
     margin-top: 48px;
 
-    > .column {
+    > .columns > .column {
       > p.name {
         font-weight: 500;
         text-transform: uppercase;
@@ -51,6 +50,37 @@
 
       button.cancel {
         margin-left: auto;
+      }
+    }
+  }
+}
+
+.create-row-modal-content {
+  background-color: white;
+  flex: 1 0 auto;
+  padding: 40px 40px 0 40px;
+  background-color: $wild-sand;
+
+  &.selected {
+    display: block;
+  }
+
+  > div > section {
+    &.results-section {
+      > header.results-header {
+        display: flex;
+        align-items: center;
+        > button.add-references {
+          margin-left: auto;
+          transition: transform 200ms $out-back-bezier, opacity 200ms;
+
+          &:not(.show) {
+            transition: transform 200ms $in-back-bezier, opacity 200ms;
+            pointer-events: none;
+            transform: translate(0, 20px);
+            opacity: 0;
+          }
+        }
       }
     }
   }

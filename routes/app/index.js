@@ -254,7 +254,7 @@ router.post('/:model', (req, res, next) => {
 //   });
 // });
 //
-router.post('/models', (req, res, next) => {
+router.post('/', (req, res, next) => {
   let url = `${API_URL}/models`;
   request.post({ url: url, form: req.body }, (err, response, body) => {
     if (err) { return next(err); }
