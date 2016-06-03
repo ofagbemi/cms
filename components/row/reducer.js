@@ -3,10 +3,15 @@ const update          = require('react-addons-update');
 
 module.exports = combineReducers({
   createMode,
-  columns
+  columns,
+  model
 });
 
 function createMode(state = true) {
+  return state;
+}
+
+function model(state = {}) {
   return state;
 }
 
@@ -15,7 +20,8 @@ function columns(state = [], params) {
     type,
     index,
     columnValue,
-    columnFiles
+    columnFiles,
+    columnType
   } = params;
   if (type === 'CHANGE_COLUMN_VALUE') {
     return update(state, {

@@ -96,6 +96,7 @@ router.get('/:model/create', (req, res, next) => {
       const state = {
         components: {
           createRowComponent: {
+            model: parentModel,
             createMode: true,
             columns: parentModel.columns
           }
@@ -117,13 +118,19 @@ router.get('/:model/create', (req, res, next) => {
         );
         return res.render('app/row/create', { initialState, markup })
       });
-
-
-      // return res.render('app/row/create', {
-      //   model: parentModel,
-      //   createMode: true
-      // });
     });
+  });
+});
+
+router.post('/:model', (req, res, next) => {
+  let modelName = req.params.model;
+  let url = `${API_URL}/models/${modelName}`;
+
+  request.post({url: url, form: req.body}, (err, response, body) => {
+    if (err) { return next(err); }
+    return res.json(_.extend(JSON.parse(body), {
+      redirectUrl: `/models/${modelName}`
+    }));
   });
 });
 
@@ -170,17 +177,6 @@ router.get('/:model/create', (req, res, next) => {
 //   });
 // });
 //
-// router.post('/:model', (req, res, next) => {
-//   let modelName = req.params.model;
-//   let url = `${API_URL}/models/${modelName}`;
-//
-//   request.post({url: url, form: req.body}, (err, response, body) => {
-//     if (err) { return next(err); }
-//     return res.json(_.extend(JSON.parse(body), {
-//       redirectUrl: `/models/${modelName}`
-//     }));
-//   });
-// });
 //
 // router.get('/:model/row/:id', (req, res, next) => {
 //   let id = req.params.id;
