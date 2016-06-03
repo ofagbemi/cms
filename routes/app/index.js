@@ -96,7 +96,8 @@ router.get('/:model/create', (req, res, next) => {
       const state = {
         components: {
           createRowComponent: {
-            createMode: true
+            createMode: true,
+            columns: parentModel.columns
           }
         }
       };

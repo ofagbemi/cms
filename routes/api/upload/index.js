@@ -7,6 +7,7 @@ const _      = require('underscore');
 const async  = require('async');
 const trim   = require('underscore.string/trim');
 const router = require('express').Router();
+
 const upload = require('../../../server/upload');
 
 function getFileStreamCallback(form) {
@@ -51,6 +52,16 @@ function sanitizePath(path) {
   return pathArr.join('/');
 }
 
+/**
+ * @api {post} /api/upload
+ *
+ * @apiParam {string} directory
+ * @apiParam {File} These should be parts of a multipart form. The names
+ * are automatically retreived from the filename part
+ *
+ * @apiSuccess {string} path
+ * @apiSuccess {string} msg
+ */
 router.post('/', (req, res, next) => {
   let form = new multiparty.Form();
   upload(

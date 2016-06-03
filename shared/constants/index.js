@@ -49,3 +49,6 @@ const DATA_TYPE_LABELS = exports.DATA_TYPE_LABELS = _.map(keys, (key) => {
     displayName: DATA_TYPES[key].displayName || name
   };
 });
+
+const HCI_ROOT_URL = exports.HCI_ROOT_URL = 'http://hci.stanford.edu';
+const HCI_UPLOADS_URL = exports.HCI_UPLOADS_URL = 'http://hci.st/uploads';

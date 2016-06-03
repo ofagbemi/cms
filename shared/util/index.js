@@ -1,9 +1,11 @@
 'use strict';
 
 const _          = require('underscore');
+const urlJoin    = require('url-join');
 const camelcase  = require('camelcase');
 const pascalcase = require('uppercamelcase');
 const trim       = require('underscore.string/trim');
+const Constants  = require('../constants');
 
 exports.getTableName = (displayName) => {
   // replace non-word characters with spaces before pacalcase
@@ -53,4 +55,12 @@ exports.fetchJSON = (url, config) => {
 
   c.body = JSON.stringify(config.data);
   return fetch(url, c);
+};
+
+exports.hciRootUrl = (path) => {
+  return urlJoin(Constants.HCI_ROOT_URL, path);
+};
+
+exports.hciUploadsUrl = (url) => {
+  return urlJoin(Constants.HCI_UPLOADS_URL, url);
 };

@@ -2,7 +2,6 @@ const _        = require('underscore');
 const React    = require('react');
 const update   = require('react-addons-update');
 const util     = require('../../shared/util');
-const POST_URL = '/models';
 
 module.exports = {
   // columns
@@ -56,18 +55,18 @@ module.exports = {
   },
   createModel() {
     return {
-      type: 'SUBMIT'
+      type: 'CREATE_MODEL'
     };
   },
   createModelSuccess(response) {
     return {
-      type: 'SUBMIT_SUCCESS',
+      type: 'CREATE_MODEL_SUCCESS',
       response
     };
   },
   createModelError(error) {
     return {
-      type: 'SUBMIT_ERROR',
+      type: 'CREATE_MODEL_ERROR',
       error
     };
   },
@@ -89,7 +88,8 @@ module.exports = {
 
       dispatch(this.createModel());
 
-      return util.fetchJSON(POST_URL, {
+      const url = '/models';
+      return util.fetchJSON(url, {
         method: 'POST',
         credentials: 'same-origin',
         data: data
