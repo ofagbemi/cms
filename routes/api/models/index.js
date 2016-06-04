@@ -17,7 +17,7 @@ const FILTER_REGEXES = [{
 }];
 
 /**
- * @api {get} /schemas
+ * @api {get} /models/schemas
  *
  * Returns either a JSON hash of every defined schema
  */
@@ -36,6 +36,13 @@ router.get('/schemas/:model', (req, res, nex) => {
   }
 });
 
+/**
+ * @api {get} /models/:model
+ *
+ * @param {string[]} filter Strings of the form `${columnName}==${value}` for
+ * case-insensitive equality or `${columnName}=@${value}` for fuzzy searching
+ * by column values
+ */
 router.get('/:model', validateModel, (req, res, next) => {
 
   let model = req.data.model;
