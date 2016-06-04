@@ -57,28 +57,58 @@
 
 .create-row-modal-content {
   background-color: white;
-  flex: 1 0 auto;
-  padding: 40px 40px 0 40px;
-  background-color: $wild-sand;
+  display: flex;
 
-  &.selected {
-    display: block;
+  > .sidebar {
+    flex: 0 0 auto;
+    padding-top: 40px;
+    width: 180px;
+    height: 600px;
+    height: 100%;
+    border-right: solid 1px $wild-sand;
+
+    > ul > li {
+      margin: 7px 0;
+      padding: 7px 0 7px 40px;
+      cursor: pointer;
+      border-left: solid 5px;
+      border-color: transparent;
+
+      &:hover, &.selected {
+        color: $eastern-blue;
+      }
+
+      &.selected {
+        font-weight: 400;
+        border-color: $eastern-blue;
+      }
+    }
   }
 
-  > div > section {
-    &.results-section {
-      > header.results-header {
-        display: flex;
-        align-items: center;
-        > button.add-references {
-          margin-left: auto;
-          transition: transform 200ms $out-back-bezier, opacity 200ms;
+  > .select-references {
+    flex: 1 0 auto;
+    padding: 40px 40px 0 40px;
+    background-color: $wild-sand;
 
-          &:not(.show) {
-            transition: transform 200ms $in-back-bezier, opacity 200ms;
-            pointer-events: none;
-            transform: translate(0, 20px);
-            opacity: 0;
+    &:not(.show) {
+      display: none;
+    }
+
+    > section {
+      &.results-section {
+        > header.results-header {
+          display: flex;
+          align-items: center;
+          > button.add-references {
+            margin-left: auto;
+            transition: transform 200ms $out-back-bezier, opacity 200ms;
+
+            &:not(.show) {
+              transition: transform 200ms $in-back-bezier, opacity 200ms;
+              pointer-events: none;
+              transform: translate(0, 20px);
+              opacity: 0;
+            }
           }
         }
       }

@@ -11,6 +11,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    onSelectReferenceSidebar({ index }) {
+      return dispatch(Actions.selectReferenceSidebar({ index }));
+    },
     onShowEditReferences() {
       return dispatch(Actions.showEditReferences());
     },

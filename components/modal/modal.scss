@@ -8,8 +8,6 @@
   padding-top: 10%;
 
   background-color: $cod-grey-shadow;
-  display: flex;
-  justify-content: center;
   z-index: $modal-z-index;
   overflow: scroll;
 
@@ -20,6 +18,7 @@
 
   > .modal-content {
     width: 80%;
+    margin: 0 auto;
     max-width: 768px;
     min-height: 600px;
   }

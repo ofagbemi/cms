@@ -8,6 +8,7 @@ module.exports = combineReducers({
   references,
   referenceSearchBy,
   referenceSearchResults,
+  referenceSidebarSelected,
   isEditingReferences
 });
 
@@ -16,6 +17,13 @@ function isEditingReferences(state = false, { type }) {
     return true;
   } else if (type === 'HIDE_EDIT_REFERENCES') {
     return false;
+  }
+  return state;
+}
+
+function referenceSidebarSelected(state = 0, { type, index }) {
+  if (type === 'SELECT_REFERENCE_SIDEBAR') {
+    return index;
   }
   return state;
 }

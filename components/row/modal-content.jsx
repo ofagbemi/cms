@@ -1,4 +1,5 @@
 const React = require('react');
+const classNames = require('classnames');
 
 module.exports = React.createClass({
   render() {
@@ -6,19 +7,43 @@ module.exports = React.createClass({
       model,
       referenceSearchResults,
       referenceSearchBy,
+      referenceSidebarSelected,
 
       onAddReferenceRow,
       onChangeReferenceSearchBy,
+      onSelectReferenceSidebar,
       onSearchReferenceRows
     } = this.props;
 
     return (
       <div className="create-row-modal-content">
+        <div className="sidebar">
+          <ul>
+            {
+              model.references.map((reference, index) => {
+                return (
+                  <li className={ classNames({ 'selected': referenceSidebarSelected === index }) }
+                      key={ index } onClick={ (e) => onSelectReferenceSidebar({ index }) }>
+                    { reference.foreignDisplayName }
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </div>
+
+
         {(() => {
           return model.references.map((reference, index) => {
 
             return (
-              <div key={ index }>
+              <div key={ index }
+                   className={
+                     classNames(
+                       'select-references',
+                       { 'show': referenceSidebarSelected === index }
+                     )
+                   }>
                 <header>
                   <label>
                     <p>Search “{ reference.foreignModel.displayName }”</p>

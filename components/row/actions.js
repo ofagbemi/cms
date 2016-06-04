@@ -69,7 +69,7 @@ module.exports = {
       data.references = _.mapObject(references, rows => {
         return _.map(rows, row => row.id);
       });
-      
+
       const url = `/${ model.name }`;
       util.fetchJSON(url, {
         method: 'POST',
@@ -230,6 +230,12 @@ module.exports = {
       type: 'ADD_REFERENCE_ROW',
       foreignName,
       row
+    }
+  },
+  selectReferenceSidebar({ index }) {
+    return {
+      type: 'SELECT_REFERENCE_SIDEBAR',
+      index
     }
   }
 };

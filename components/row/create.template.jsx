@@ -12,9 +12,11 @@ module.exports = function(params) {
     isEditingReferences,
     referenceSearchResults,
     referenceSearchBy,
+    referenceSidebarSelected,
 
     onAddReferenceRow,
     onChangeReferenceSearchBy,
+    onSelectReferenceSidebar,
     onShowEditReferences,
     onHideEditReferences,
     onSearchReferenceRows,
@@ -51,6 +53,8 @@ module.exports = function(params) {
               referenceSearchBy={ referenceSearchBy }
               onChangeReferenceSearchBy={ onChangeReferenceSearchBy }
               onAddReferenceRow={ onAddReferenceRow }
+              referenceSidebarSelected={ referenceSidebarSelected }
+              onSelectReferenceSidebar={ onSelectReferenceSidebar }
               />
           </Modal>
 
