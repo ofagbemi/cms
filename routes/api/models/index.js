@@ -9,18 +9,6 @@ const Models = require('../../../server/models');
 const util   = require('../../../shared/util');
 const Constants = require('../../../shared/constants');
 
-const DATA_TYPES = require('../../../server/models/data-types.json');
-const DEFAULT_ROW_LIMIT = 20;
-const MAX_ROW_LIMIT = 100;
-const FILTER_REGEXES = [{
-  op: 'equal',
-  regex: /(.+)\=\=(.+)/
-}, {
-  op: '$like',
-  regex: /(.+)\=\@(.+)/,
-  transform: (str) => `%${str}%`
-}];
-
 /**
  * @api {get} /models/schemas
  *
@@ -54,9 +42,9 @@ router.get('/:model', validateModel, (req, res, next) => {
   let schema = req.data.schema;
 
   let page = parseInt(req.query.page) || 1;
-  let limit = parseInt(req.query.limit, 10) || DEFAULT_ROW_LIMIT;
-  if (limit > MAX_ROW_LIMIT) {
-    limit = MAX_ROW_LIMIT;
+  let limit = parseInt(req.query.limit, 10) || Constants.DEFAULT_ROW_LIMIT;
+  if (limit > Constants.MAX_ROW_LIMIT) {
+    limit = Constants.MAX_ROW_LIMIT;
   }
 
   let where = processFilters(req.query.filter, schema);
@@ -211,7 +199,7 @@ function processFilters(filters, schema) {
     let value = null;
 
     // go through the regex's in order of priority
-    for (let exps of FILTER_REGEXES) {
+    for (let exps of Constants.FILTER_REGEXES) {
       match = param.match(exps.regex);
       if (match) {
         op = exps.op;

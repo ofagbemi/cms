@@ -52,3 +52,15 @@ const DATA_TYPE_LABELS = exports.DATA_TYPE_LABELS = _.map(keys, (key) => {
 
 const HCI_ROOT_URL = exports.HCI_ROOT_URL = 'http://hci.stanford.edu';
 const HCI_UPLOADS_URL = exports.HCI_UPLOADS_URL = 'http://hci.st/uploads';
+
+
+const DEFAULT_ROW_LIMIT = exports.DEFAULT_ROW_LIMIT = 20;
+const MAX_ROW_LIMIT = exports.MAX_ROW_LIMIT = 100;
+const FILTER_REGEXES = exports.FILTER_REGEXES = [{
+  op: 'equal',
+  regex: /(.+)\=\=(.+)/
+}, {
+  op: '$like',
+  regex: /(.+)\=\@(.+)/,
+  transform: (str) => `%${str}%`
+}];
