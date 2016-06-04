@@ -55,7 +55,8 @@ module.exports = {
       const {
         createMode,
         columns,
-        model
+        model,
+        references
       } = getState().components.createRowComponent;
 
       // TODO: only send updated columns
@@ -64,6 +65,11 @@ module.exports = {
         data[column.name] = column.value;
       });
 
+      // only send up the row IDs to the server
+      data.references = _.mapObject(references, rows => {
+        return _.map(rows, row => row.id);
+      });
+      
       const url = `/${ model.name }`;
       util.fetchJSON(url, {
         method: 'POST',

@@ -9,6 +9,7 @@ const tunnel     = require('tunnel-ssh');
 const util       = require('../../shared/util');
 const trim       = require('underscore.string/trim');
 const escapeHTML = require('underscore.string/escapeHTML');
+const pluralize  = require('pluralize');
 
 const DATA_TYPES = require('./data-types.json');
 const SEQUELIZE_DEFINE_OPTS = {
@@ -215,12 +216,18 @@ Models.prototype._loadModels = function() {
         // before we synchronize the models, establish the relationships
         // between references
         _.each(models, (model, modelName) => {
-          let schema = this.schemas[modelName];
+          const schema = this.schemas[modelName];
           _.each(schema.references, (reference) => {
-            let refSchema = this.schemas[reference.foreignTable];
-            let refModel = models[reference.foreignTable];
-            let joinTableName = util.getJoinTableName(modelName, refSchema.name);
-            model.belongsToMany(refModel, { through: joinTableName });
+            const refSchema = this.schemas[reference.foreignTable];
+            const refModel = models[reference.foreignTable];
+
+            const joinTableName = util.getJoinTableName(reference.name, reference.foreignName);
+
+            model.belongsToMany(refModel, {
+              as: pluralize(reference.foreignName),
+              through: joinTableName,
+              foreignKey: `${ reference.foreignName }Id`
+            });
           });
         });
 

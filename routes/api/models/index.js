@@ -1,8 +1,13 @@
 'use strict';
 
 const _      = require('underscore');
-const Models = require('../../../server/models');
+const async  = require('async');
+const pluralize = require('pluralize');
 const router = require('express').Router();
+
+const Models = require('../../../server/models');
+const util   = require('../../../shared/util');
+const Constants = require('../../../shared/constants');
 
 const DATA_TYPES = require('../../../server/models/data-types.json');
 const DEFAULT_ROW_LIMIT = 20;
@@ -86,16 +91,113 @@ router.get('/:model/row/:id', validateModel, (req, res, next) => {
 });
 
 router.post('/:model', validateModel, (req, res, next) => {
-  let model = req.data.model;
-  let data = req.body;
+  const schema = req.data.schema;
+  const model  = req.data.model;
+  const data   = _.omit(req.body, 'references');
+  const references = req.body.references;
 
   // don't bother with sanitization here -- validators
   // attached to the object will take care of it
-  model.create(data).then((result) => {
-    return res.json(result.dataValues);
-  }).catch((err) => {
-    return next(err);
+  model.create(data).then(row => {
+    const parallelFns = _.map(references, (ids, refName) => {
+
+      return (callback) => {
+        const foreignSchemaRef = _.find(
+          schema.references,
+          ref => ref.foreignName === refName);
+
+        if (!foreignSchemaRef) {
+          return callback(
+            new Error(
+              `could not find '${ refName }' in '${ schema.name }' ` +
+              `references`)
+          );
+        }
+
+        const addFnName = `add${ util.pascalcase(pluralize(refName)) }`;
+        let addFn       = row[addFnName];
+        if (!addFn) {
+          // TODO: might want to log this somewhere, in case we ever
+          // can't get the proper function name this way
+          return callback(
+            new Error(
+              `could not find function '${addFnName}' in ` +
+              `model '${ schema.name }' row`)
+          );
+        }
+
+        addFn = addFn.bind(row);
+
+        const foreignModel = Models.models[foreignSchemaRef.foreignTable];
+        if (!foreignModel) return;
+
+        foreignModel.findAll({
+          where: { id: ids }
+        }).then((items) => {
+          addFn(items)
+            .then(() => callback())
+            .catch(err => callback(err));
+        });
+      };
+    });
+
+    async.parallel(parallelFns, (err, result) => {
+      console.log(err);
+    });
   });
+
+
+  // model.create(data).then(row => {
+
+    // _.each(references, (ids, refName) => {
+    //
+    //   const foreignSchemaRef = _.find(
+    //     schema.references,
+    //     ref => ref.foreginName === refName);
+    //
+    //   if (!foreignSchemaRef) return;
+    //
+    //   const addFnName = `add${ util.pascalcase(pluralize(refName)) }`;
+    //   const addFn     = row[addFnName];
+    //   if (!addFn) {
+    //     // TODO: might want to log this somewhere, in case we ever
+    //     // can't get the proper function name this way
+    //     return;
+    //   }
+    //
+    //   const foreignModel = Models.models[foreignSchemaRef.foreignTable];
+    //   if (!foreignModel) return;
+    //
+    //   foreignModel.findAll({
+    //     where: { id: ids }
+    //   }).then((items) => {
+    //
+    //     addFn()
+    //   });
+    // });
+
+  // });
+
+
+  // model.create(data).then((row) => {
+  //   //
+  //   // console.log(row.setAuthors);
+  //   // console.log(row.prototype);
+  //   // console.log(row);
+  //
+  //   // console.log(row.setAuthor);
+  //   _.each(references, (value, key) => {
+  //
+  //   });
+  //
+  //   // let d = result.set(references)
+  //   // .then((withReferences) => {
+  //   //   console.log(withReferences);
+  //   //   return res.json(withReferences.dataValues);
+  //   // })
+  // }).catch((err) => {
+  //   return next(err);
+  // });
 });
 
 router.put('/:model/row/:id', validateModel, (req, res, next) => {

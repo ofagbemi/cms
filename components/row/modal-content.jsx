@@ -73,12 +73,14 @@ module.exports = React.createClass({
   }
 });
 
-function renderSearchResults({
-  model,
-  referenceSearchResults,
-  index,
-  onAddReferenceRow,
-  reference }) {
+function renderSearchResults(params) {
+  const {
+    model,
+    referenceSearchResults,
+    index,
+    onAddReferenceRow,
+    reference
+  } = params;
 
   const searchResults = referenceSearchResults[index];
   if (searchResults &&
@@ -143,7 +145,7 @@ function renderSearchBy({ index: referenceIndex, reference, onChangeReferenceSea
             columns.map((column, index) => {
               return (
                 <option key={ index } value={ column.name }>
-                    { column.displayName }
+                  { column.displayName }
                 </option>
               );
             })

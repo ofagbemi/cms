@@ -7,19 +7,21 @@ const pascalcase = require('uppercamelcase');
 const trim       = require('underscore.string/trim');
 const Constants  = require('../constants');
 
-exports.getTableName = (displayName) => {
+const getTableName = exports.getTableName = (displayName) => {
   // replace non-word characters with spaces before pacalcase
   // removes them and pascalizes properly
   let n = trim(displayName).replace(/\W+/g, ' ');
   return pascalcase(n);
 };
 
+exports.pascalcase = pascalcase;
+
 /**
  * @param {string} a
  * @param {string} b
  */
 exports.getJoinTableName = (a, b) =>  {
-  let sorted = [a, b].sort();
+  const sorted = [getTableName(a), getTableName(b)].sort();
   return sorted.join('_');
 };
 
