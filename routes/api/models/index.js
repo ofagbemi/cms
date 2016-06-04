@@ -133,71 +133,19 @@ router.post('/:model', validateModel, (req, res, next) => {
 
         foreignModel.findAll({
           where: { id: ids }
-        }).then((items) => {
+        }).then(items => {
           addFn(items)
             .then(() => callback())
             .catch(err => callback(err));
-        });
+        }).catch(err => callback(err));
       };
     });
 
-    async.parallel(parallelFns, (err, result) => {
-      console.log(err);
+    async.parallel(parallelFns, (err) => {
+      if (err) return next(err);
+      return res.json(row.dataValues);
     });
   });
-
-
-  // model.create(data).then(row => {
-
-    // _.each(references, (ids, refName) => {
-    //
-    //   const foreignSchemaRef = _.find(
-    //     schema.references,
-    //     ref => ref.foreginName === refName);
-    //
-    //   if (!foreignSchemaRef) return;
-    //
-    //   const addFnName = `add${ util.pascalcase(pluralize(refName)) }`;
-    //   const addFn     = row[addFnName];
-    //   if (!addFn) {
-    //     // TODO: might want to log this somewhere, in case we ever
-    //     // can't get the proper function name this way
-    //     return;
-    //   }
-    //
-    //   const foreignModel = Models.models[foreignSchemaRef.foreignTable];
-    //   if (!foreignModel) return;
-    //
-    //   foreignModel.findAll({
-    //     where: { id: ids }
-    //   }).then((items) => {
-    //
-    //     addFn()
-    //   });
-    // });
-
-  // });
-
-
-  // model.create(data).then((row) => {
-  //   //
-  //   // console.log(row.setAuthors);
-  //   // console.log(row.prototype);
-  //   // console.log(row);
-  //
-  //   // console.log(row.setAuthor);
-  //   _.each(references, (value, key) => {
-  //
-  //   });
-  //
-  //   // let d = result.set(references)
-  //   // .then((withReferences) => {
-  //   //   console.log(withReferences);
-  //   //   return res.json(withReferences.dataValues);
-  //   // })
-  // }).catch((err) => {
-  //   return next(err);
-  // });
 });
 
 router.put('/:model/row/:id', validateModel, (req, res, next) => {

@@ -129,7 +129,7 @@ router.post('/:model', (req, res, next) => {
   request.post({url: url, form: req.body}, (err, response, body) => {
     if (err) { return next(err); }
     return res.json(_.extend(JSON.parse(body), {
-      redirectUrl: `/models/${modelName}`
+      redirectUrl: `/${modelName}`
     }));
   });
 });
