@@ -19,7 +19,7 @@ module.exports = React.createClass({
             (() => {
               if (column.value) {
                 return (
-                  <a target="_blank" href="{ util.hciRootUrl( column.value ) }">
+                  <a target="_blank" href={ util.hciRootUrl( column.value ) }>
                     { column.value }
                   </a>
                 )

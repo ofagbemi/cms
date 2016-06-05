@@ -8,19 +8,16 @@ const ReactRouter     = require('react-router');
 const RouterContext   = require('react-router').RouterContext;
 const router          = require('express').Router();
 const request         = require('request');
+const querystring     = require('querystring');
 const createStore     = require('redux').createStore;
 const combineReducers = require('redux').combineReducers;
 const Provider        = require('react-redux').Provider;
 
+const Constants    = require('../../shared/constants');
 const reactRoutes  = require('./react-routes');
-const AppComponent = require('../../components/app.jsx');
-const CreateModelComponent = require('../../components/model/create.jsx').component;
 const componentsReducer    = require('../../components/reducer');
 
 const API_URL = process.env.ROOT_URL + '/api';
-
-// const DATA_TYPES = require('../../server/models/data-types.json');
-// const DATA_TYPE_LABELS = _.keys(DATA_TYPES).sort();
 
 module.exports = router;
 
@@ -74,6 +71,24 @@ router.get('/create', (req, res, next) => {
     });
   });
 });
+
+
+  // rows, schema
+  // async.parallel({
+  //   rows: (callback) => {
+  //     let url = `${API_URL}/models/${modelName}?${query}`;
+  //     request.get(url, (err, response, body) => {
+  //       if (err) { return callback(err); }
+  //
+  //       let rows = JSON.parse(body);
+  //       return callback(null, rows);
+  //     });
+  //   },
+  //   schema: getLoadSchemaParallelFn(modelName)
+  // }, (err, data) => {
+  //   if (err) { return next(err); }
+  //   return res.render('models/rows', data);
+  // });
 
 router.get('/:model/create', (req, res, next) => {
   const modelName = req.params.model;
@@ -134,6 +149,60 @@ router.post('/:model', (req, res, next) => {
   });
 });
 
+router.get('/:model/:page?', (req, res, next) => {
+  const page = req.params.page || 1;
+  const query = querystring.stringify({
+    page,
+    limit: Constants.ROW_LIMIT
+  });
+
+  const modelName = req.params.model;
+
+  async.parallel({
+    rows: (callback) => {
+      const url = `${API_URL}/models/${modelName}?${query}`;
+      request.get(url, (err, response, body) => {
+        if (err || response.statusCode !== 200) {
+          return callback(err || JSON.parse(body));
+        }
+        return callback(null, JSON.parse(body));
+      });
+    },
+    model: getLoadSchemaParallelFn(modelName)
+  }, (err, result) => {
+
+    if (err) return next(err);
+
+    const rows  = result.rows;
+    const model = result.model;
+    const state = {
+      components: {
+        viewModelRowsComponent: {
+          rows,
+          model
+        }
+      }
+    };
+
+    const store = createStore(combineReducers({
+      components: componentsReducer
+    }), state);
+    const initialState = store.getState();
+
+    ReactRouter.match({
+      location: req.url,
+      routes: reactRoutes
+    }, (err, redirectLocation, props) => {
+      const markup = ReactDOMServer.renderToString(
+        <Provider store={ store }>
+          <RouterContext {...props} />
+        </Provider>
+      );
+
+      return res.render('app/view', { initialState, markup });
+    });
+  });
+});
 // =====================================
 // const _       = require('underscore');
 // const async   = require('async');
@@ -268,9 +337,10 @@ function getLoadSchemaParallelFn(schema) {
   return (callback) => {
     let url = `${API_URL}/models/schemas/${schema}`;
     request.get(url, (err, response, body) => {
-      if (err) { return callback(err); }
-
-      let schema = JSON.parse(body);
+      if (err || response.statusCode !== 200) {
+        return callback(err || JSON.parse(body));
+      }
+      const schema = JSON.parse(body);
       return callback(null, schema);
     });
   };
